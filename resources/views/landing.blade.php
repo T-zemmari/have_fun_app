@@ -14,7 +14,7 @@
                 <p class="max-w-2xl mb-6 font-light text-white lg:mb-8 md:text-lg lg:text-xl">
                     Aquí podrás jugar a tus juegos favoritos como Tetris, juegos de memoria y muchos más. Descubre nuevos títulos y disfruta de horas de entretenimiento en un solo lugar.
                 </p>
-                <a href="{{ route('landing') }}"
+                <a href="{{ route('tetris_one') }}"
                     class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300">
                     Jugar Ahora
                     <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20"

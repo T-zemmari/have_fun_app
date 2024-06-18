@@ -17,6 +17,10 @@ Route::get('/contacto', function () {
     return view('contact');
 })->name('contact');
 
+Route::get('/juegos/tetris_one', function () {
+    return view('juegos.tetris-one');
+})->name('tetris_one');
+
 
 
 Route::get('/dashboard', function () {
@@ -29,4 +33,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/mi-perfil', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
