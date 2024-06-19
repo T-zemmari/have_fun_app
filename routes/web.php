@@ -21,7 +21,9 @@ Route::get('/juegos/tetris_one', function () {
     return view('juegos.tetris-one');
 })->name('tetris_one');
 
-
+Route::get('/juegos', function () {
+    return view('juegos.coleccion');
+})->name('coleccion');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -7,9 +7,11 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
+        "./node_modules/flowbite/**/*.js"
     ],
 
     theme: {
+        darkMode: 'none',
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
@@ -17,5 +19,5 @@ export default {
         },
     },
 
-    plugins: [forms],
+    plugins: ['flowbite/plugin',forms],
 };

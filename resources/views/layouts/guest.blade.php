@@ -19,7 +19,7 @@
 <body class="font-sans text-gray-900 antialiased">
     <div class="w-full min-h-screen flex flex-col justify-start items-start">
         <div class="w-full h-[100%]">
-            {{ $slot }}   
+            {{ $slot }}
         </div>
         @include('layouts.partials.footer')
     </div>
