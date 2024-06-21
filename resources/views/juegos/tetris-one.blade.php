@@ -3,40 +3,48 @@
     @include('layouts.partials.navbar')
 
     <section class="w-full h-[91.1vh] flex justify-center md:p-12">
-        <div class="w-full max-w-[60%] h-[100%] flex flex-row justify-center items-center mt-[1em]">
-            <div class="w-[60%] h-[100%] flex justify-center items-center">
-                <canvas id="canva_tetris_one" width="300" height="600"></canvas>
-            </div>
-            <div class="w-[40%] h-[100%] flex flex-col justify-start items-center border border-blue-200 p-1">
-                <div id="level_tetris_one"
-                    class="w-full h-16 rounded-lg bg-[#321a33] text-white flex justify-center items-center"><b>NIVEL :
-                        <span id="span_tetris_one_actual_level">1</span></b></div>
-                <div id="score_tetris_one"
-                    class="w-full h-16 rounded-lg bg-[#321a33] text-white flex justify-center items-center font-bold">0
+        <div class="w-full max-w-[60%] h-[100%] flex flex-row justify-center items-center mt-[1em] gap-2">
+            <div class="w-[60%] h-[100%] flex flex-col justify-center items-center border border-[#dbdbdb] p-1">
+                <div class="w-full flex flex-row justify-center items-center gap-4">
+                    <canvas id="canva_tetris_one" width="300" height="600"></canvas>
+                    <div class="w-[300px] h-[100%] flex flex-col justify-start items-center p-1">
+                        <div id="level_tetris_one"
+                            class="w-full h-16 rounded-lg bg-gradient-to-r from-violet-500 to-fuchsia-500  text-white flex justify-center items-center ">
+                            <b class="text-[14px]">NIVEL :
+                                <span id="span_tetris_one_actual_level">1</span></b>
+                        </div>
+                        <div id="score_tetris_one"
+                            class="w-full h-16 rounded-lg bg-gradient-to-r from-violet-500 to-fuchsia-500  text-white flex justify-center items-center font-bold text-[14px]">
+                            0
+                        </div>
+                        <div
+                            class="w-full mt-20 h-[200px] rounded-lg bg-gradient-to-r from-violet-500 to-fuchsia-500  text-white flex justify-center items-center font-bold">
+                            <canvas id="preview_next_piece" class="w-[100px]"></canvas>
+                        </div>
+                    </div>
                 </div>
-                <canvas id="preview_next_piece"
-                    class="w-full mt-20 h-[200px] rounded-lg bg-[#321a33] text-white flex justify-center items-center font-bold">
-                </canvas>
-                <div class="mt-20 flex flex-row justify-center items-center gap-6">
-                    <button id="startButton" class="w-[4em] h-[4em] flex justify-center items-center bg-center bg-cover"
+                <div
+                    class="w-full h-[80px] rounded-lg mt-2 flex flex-row justify-center items-center gap-6 bg-gradient-to-r from-violet-500 to-fuchsia-500 ">
+                    <button id="startButton" class="w-[3em] h-[3em] flex justify-center items-center bg-center bg-cover"
                         style="background-image: url('{{ asset('assets/icons/play_3.png') }}')">
                     </button>
-                    <button id="pauseButton" class="w-[4em] h-[4em] flex justify-center items-center bg-center bg-cover"
+                    <button id="pauseButton" class="w-[3em] h-[3em] flex justify-center items-center bg-center bg-cover"
                         style="background-image: url('{{ asset('assets/icons/pause_1.png') }}')">
                     </button>
                     <button id="resumeButton"
-                        class="w-[4em] h-[4em] flex justify-center items-center bg-center bg-cover"
+                        class="w-[3em] h-[3em] flex justify-center items-center bg-center bg-cover"
                         style="background-image: url('{{ asset('assets/icons/resume_1.png') }}');display:none">
                     </button>
-                    <button id="stopButton" class="w-[4em] h-[4em] flex justify-center items-center bg-center bg-cover"
+                    <button id="stopButton" class="w-[3em] h-[3em] flex justify-center items-center bg-center bg-cover"
                         style="background-image: url('{{ asset('assets/icons/stop_1.png') }}')">
                     </button>
                     <button id="restartButton"
-                        class="w-[4em] h-[4em] flex justify-center items-center bg-center bg-cover"
+                        class="w-[3em] h-[3em] flex justify-center items-center bg-center bg-cover"
                         style="background-image: url('{{ asset('assets/icons/restart_1.png') }}');display:none">
                     </button>
                 </div>
             </div>
+
         </div>
     </section>
 
