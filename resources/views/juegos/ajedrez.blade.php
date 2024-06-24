@@ -3,10 +3,12 @@
     @include('layouts.partials.navbar')
     <section class="w-full h-screen flex flex-col items-center justify-center">
         <div class="w-full max-w-4xl p-4 flex flex-col justify-center items-center gap-4">
-            <span id="current_turn" class="flex space-x-4 w-full h-[80px] rounded-lg mt-2 flex-row justify-center items-center gap-6 bg-gradient-to-r from-violet-500 to-fuchsia-500"><b>Blancas</b></span>
+            <span id="current_turn"
+                class="flex space-x-4 w-full h-[80px] rounded-lg mt-2 flex-row justify-center items-center gap-6 bg-gradient-to-r from-violet-500 to-fuchsia-500"><b>Blancas</b></span>
             <canvas id="canva_chess" width="400" height="400"></canvas>
             <div class="w-full mt-4 flex justify-between items-center">
-                <div class="flex space-x-4 w-full h-[80px] rounded-lg mt-2  flex-row justify-center items-center gap-6 bg-gradient-to-r from-violet-500 to-fuchsia-500 ">
+                <div
+                    class="flex space-x-4 w-full h-[80px] rounded-lg mt-2  flex-row justify-center items-center gap-6 bg-gradient-to-r from-violet-500 to-fuchsia-500 ">
                     <button id="playButton" class="w-[3em] h-[3em] flex justify-center items-center bg-center bg-cover"
                         style="background-image: url('{{ asset('assets/icons/play_1.png') }}')" aria-label="Play">
                     </button>
@@ -102,19 +104,25 @@
                 }
 
                 drawPieces() {
-                    const size = this.canvas.width / 8;
-                    this.board.forEach((row, rowIndex) => {
-                        row.forEach((piece, colIndex) => {
-                            if (piece) {
-                                this.ctx.fillStyle = piece[0] === 'w' ? this.colors.black : this.colors.white;
-                                this.ctx.font = `${size - 10}px Arial`;
-                                this.ctx.textAlign = 'center';
-                                this.ctx.textBaseline = 'middle';
-                                this.ctx.fillText(this.pieces[piece], colIndex * size + size / 2, rowIndex * size + size / 2);
-                            }
-                        });
-                    });
+    const size = this.canvas.width / 8;
+    this.board.forEach((row, rowIndex) => {
+        row.forEach((piece, colIndex) => {
+            if (piece) {
+                if (piece[0] === 'w') {
+                    this.ctx.fillStyle = '#003366'; // Color oscuro para piezas blancas
+                } else {
+                    this.ctx.fillStyle = '#ffcc00'; // Color amarillo para piezas negras
                 }
+                this.ctx.font = `${size - 10}px Arial`;
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText(this.pieces[piece], colIndex * size + size / 2, rowIndex * size + size / 2);
+            }
+        });
+    });
+}
+
+
 
                 startGame() {
                     this.initializeGame();
@@ -129,22 +137,33 @@
                 handlePieceDragStart(event) {
                     if (this.isPaused) return;
 
-                    const { row, col } = this.getMousePosition(event);
+                    const {
+                        row,
+                        col
+                    } = this.getMousePosition(event);
                     const piece = this.board[row][col];
 
                     if (piece && piece[0] === (this.currentTurn === 'Blancas' ? 'w' : 'b')) {
-                        this.draggingPiece = { piece, row, col };
+                        this.draggingPiece = {
+                            piece,
+                            row,
+                            col
+                        };
                     }
                 }
 
                 handlePieceDrag(event) {
                     if (this.isPaused || !this.draggingPiece) return;
 
-                    const { offsetX, offsetY } = event;
+                    const {
+                        offsetX,
+                        offsetY
+                    } = event;
                     const size = this.canvas.width / 8;
 
                     this.drawBoard();
-                    this.ctx.fillStyle = this.draggingPiece.piece[0] === 'w' ? this.colors.black : this.colors.white;
+                    this.ctx.fillStyle = this.draggingPiece.piece[0] === 'w' ? this.colors.black : this.colors
+                        .white;
                     this.ctx.font = `${size - 10}px Arial`;
                     this.ctx.textAlign = 'center';
                     this.ctx.textBaseline = 'middle';
@@ -154,9 +173,18 @@
                 handlePieceDrop(event) {
                     if (this.isPaused || !this.draggingPiece) return;
 
-                    const { row, col } = this.getMousePosition(event);
-                    const start = { row: this.draggingPiece.row, col: this.draggingPiece.col };
-                    const end = { row, col };
+                    const {
+                        row,
+                        col
+                    } = this.getMousePosition(event);
+                    const start = {
+                        row: this.draggingPiece.row,
+                        col: this.draggingPiece.col
+                    };
+                    const end = {
+                        row,
+                        col
+                    };
 
                     if (isValidMove(this.draggingPiece.piece, start, end, this.board)) {
                         this.board[end.row][end.col] = this.draggingPiece.piece;
@@ -194,7 +222,8 @@
                     this.turnIndicator.textContent = this.currentTurn;
 
                     if (this.currentTurn === 'Negras') {
-                        setTimeout(() => this.computerMove(), 500); // Allow some time for the player's move to be seen
+                        setTimeout(() => this.computerMove(),
+                        500); // Allow some time for the player's move to be seen
                     }
                 }
 
@@ -206,10 +235,20 @@
                             if (piece && piece[0] === 'b') { // AI is black
                                 for (let r = 0; r < 8; r++) {
                                     for (let c = 0; c < 8; c++) {
-                                        const start = { row: rowIndex, col: colIndex };
-                                        const end = { row: r, col: c };
+                                        const start = {
+                                            row: rowIndex,
+                                            col: colIndex
+                                        };
+                                        const end = {
+                                            row: r,
+                                            col: c
+                                        };
                                         if (isValidMove(piece, start, end, this.board)) {
-                                            possibleMoves.push({ piece, start, end });
+                                            possibleMoves.push({
+                                                piece,
+                                                start,
+                                                end
+                                            });
                                         }
                                     }
                                 }
@@ -266,7 +305,8 @@
                             return true;
                         }
                         if ((startRow === 6 && piece[0] === 'w') || (startRow === 1 && piece[0] === 'b')) {
-                            return endRow === startRow + 2 * direction && board[startRow + direction][startCol] === null;
+                            return endRow === startRow + 2 * direction && board[startRow + direction][startCol] ===
+                                null;
                         }
                     }
                 } else if (Math.abs(startCol - endCol) === 1 && endRow === startRow + direction) {
@@ -327,7 +367,9 @@
 
                 while (currentRow !== endRow && currentCol !== endCol) {
                     // Check if coordinates are within board boundaries
-                    if (currentRow < 0 || currentRow > 7 || currentCol < 0 || currentCol > 7 || board[currentRow][currentCol] !== null) {
+                    if (currentRow < 0 || currentRow > 7 || currentCol < 0 || currentCol > 7 || board[currentRow][
+                            currentCol
+                        ] !== null) {
                         return false;
                     }
                     currentRow += rowIncrement;
