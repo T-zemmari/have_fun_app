@@ -3,7 +3,7 @@
     @include('layouts.partials.navbar')
 
     <section class="w-full h-screen flex justify-center items-center bg-gray-100">
-        <div class="w-full max-w-4xl p-8 bg-white shadow-lg rounded-lg">
+        <div class="w-[830px] h-[750px] max-w-4xl p-8 bg-white shadow-lg rounded-lg flex flex-col justify-center items-center">
             <h1 class="text-3xl font-bold text-center text-gray-900 mb-4">Sudoku</h1>
 
             <div class="text-center mb-4">
@@ -18,12 +18,10 @@
                     <button class="btn-size" data-size="9">9x9</button>
                 </div>
             </div>
-            <div class="w-[100%] flex justify-center items-center">
-                <div id="sudokuBoard" class="mt-8 grid gap-1 text-center">
-                    <!-- Aquí se generará el tablero de Sudoku dinámicamente -->
-                </div>
-            </div>
 
+            <div id="sudokuBoard" class="mt-8 grid place-content-center gap-1 text-center">
+                <!-- Aquí se generará el tablero de Sudoku dinámicamente -->
+            </div>
 
             <div id="gameControls" class="mt-8 text-center">
                 <button id="checkBtn" class="btn-action">Verificar</button>
@@ -68,8 +66,6 @@
         }
 
         .sudoku-cell {
-            width: 40px;
-            height: 40px;
             font-size: 1.2rem;
             text-align: center;
             border: 1px solid #ccc;
@@ -88,15 +84,6 @@
             const message = document.getElementById('message');
             let boardSize = 9;
             let board = [];
-            let celsize = {
-                3: 50,
-                4: 45,
-                5: 35,
-                6: 25,
-                7: 20,
-                8: 20,
-                9: 20
-            }
 
             // Función para generar un tablero de Sudoku vacío
             function generateEmptyBoard(size) {
@@ -114,13 +101,16 @@
             function renderSudoku(board) {
                 sudokuBoard.innerHTML = '';
                 sudokuBoard.style.gridTemplateColumns = `repeat(${boardSize}, 1fr)`;
-                sudokuBoard.style.width = `${parseInt(boardSize)*parseInt(tamanyo[boardSize])}px`
-                sudokuBoard.style.height = `${parseInt(boardSize)*parseInt(tamanyo[boardSize])}px`
+                sudokuBoard.style.width = `${parseInt(boardSize)*40}px`;
+                
+                const cellSize = 400 / boardSize;
                 board.forEach((row, rowIndex) => {
                     row.forEach((value, colIndex) => {
                         const cell = document.createElement('input');
                         cell.type = 'text';
                         cell.classList.add('sudoku-cell');
+                        cell.style.width = `${cellSize}px`;
+                        cell.style.height = `${cellSize}px`;
                         cell.dataset.row = rowIndex;
                         cell.dataset.col = colIndex;
                         cell.value = value === 0 ? '' : value;
