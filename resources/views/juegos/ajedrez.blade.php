@@ -151,28 +151,67 @@
         </section>
 
         <h1>Chess Game</h1>
+        <div class="w-full max-w-2xl flex justify-between items-center px-4 mt-10">
+            <button id="modeIndividual"
+                class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white  focus:ring-4 focus:outline-none focus:ring-purple-200 ">
+                <span
+                    class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                    Modo Individual
+                </span>
+            </button>
+            <button id="modeMachine"
+                class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white  focus:ring-4 focus:outline-none focus:ring-pink-200 ">
+                <span
+                    class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                    Modo Contra la Máquina
+                </span>
+            </button>
+        </div>
+
         <div class="w-[100%] flex justify-center items-center">
             <table>
                 <tbody>
                     @php
                         $filas = ['8', '7', '6', '5', '4', '3', '2', '1'];
                         $columnas = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-                        $piezasBlancas = ['Wrook', 'Wknight', 'Wbishop', 'Wqueen', 'Wking', 'Wbishop', 'Wknight', 'Wrook'];
-                        $piezasNegras = ['Brook', 'Bknight', 'Bbishop', 'Bqueen', 'Bking', 'Bbishop', 'Bknight', 'Brook'];
+                        $piezasBlancas = [
+                            'Wrook',
+                            'Wknight',
+                            'Wbishop',
+                            'Wqueen',
+                            'Wking',
+                            'Wbishop',
+                            'Wknight',
+                            'Wrook',
+                        ];
+                        $piezasNegras = [
+                            'Brook',
+                            'Bknight',
+                            'Bbishop',
+                            'Bqueen',
+                            'Bking',
+                            'Bbishop',
+                            'Bknight',
+                            'Brook',
+                        ];
                         $peonBlanco = 'Wpawn';
                         $peonNegro = 'Bpawn';
                     @endphp
 
-                    @foreach($filas as $fila)
+                    @foreach ($filas as $fila)
                         <tr>
-                            <td class="{{ ($loop->index % 2 == 0) ? 'color1' : 'color2' }}">{{ $fila }}</td>
-                            @foreach($columnas as $columna)
+                            <td class="{{ $loop->index % 2 == 0 ? 'color1' : 'color2' }}">{{ $fila }}</td>
+                            @foreach ($columnas as $columna)
                                 @php
                                     $id = $fila . $columna;
-                                    $clase = ($loop->parent->index % 2 == 0 && $loop->index % 2 == 0) || ($loop->parent->index % 2 != 0 && $loop->index % 2 != 0) ? 'color1' : 'color2';
+                                    $clase =
+                                        ($loop->parent->index % 2 == 0 && $loop->index % 2 == 0) ||
+                                        ($loop->parent->index % 2 != 0 && $loop->index % 2 != 0)
+                                            ? 'color1'
+                                            : 'color2';
                                 @endphp
                                 <td class="bloque {{ $clase }}" id="{{ $id }}">
-                                    @if($fila == '8')
+                                    @if ($fila == '8')
                                         {{ $piezasNegras[$loop->index] }}
                                     @elseif($fila == '7')
                                         {{ $peonNegro }}
@@ -187,8 +226,8 @@
                     @endforeach
                     <tr>
                         <td style="background-color: black;"></td>
-                        @foreach($columnas as $columna)
-                            <td class="{{ ($loop->index % 2 == 0) ? 'color2' : 'color1' }}">{{ $columna }}</td>
+                        @foreach ($columnas as $columna)
+                            <td class="{{ $loop->index % 2 == 0 ? 'color2' : 'color1' }}">{{ $columna }}</td>
                         @endforeach
                     </tr>
                 </tbody>
@@ -203,6 +242,66 @@
 <script>
     const pieceSelected = "#f4f774"
     let turn = "W";
+    let gameMode = 'individual';
+    // Function to set game mode
+    document.getElementById("modeIndividual").addEventListener("click", () => {
+        gameMode = "individual";
+        alert("Modo Individual seleccionado");
+    });
+
+    document.getElementById("modeMachine").addEventListener("click", () => {
+        gameMode = "machine";
+        alert("Modo Contra la Máquina seleccionado");
+        if (turn === "B") {
+            // Si es el turno de la máquina, que juegue automáticamente
+            setTimeout(machineMove, 1000); // Llamada a la función para mover la máquina después de un segundo
+        }
+    });
+
+    function machineMove() {
+        machineTurn = true;
+        const bloques = document.querySelectorAll('.bloque');
+        const validMoves = [];
+
+        // Recolectar todos los movimientos válidos para la máquina
+        bloques.forEach(bloque => {
+            if (bloque.innerText.length !== 0 && bloque.innerText[0] === turn) {
+                const pieceName = bloque.innerText.slice(1);
+                const position = bloque.id;
+                const moves = hintMoves(pieceName, position);
+                validMoves.push(...moves.map(move => [position, move]));
+            }
+        });
+
+        // Seleccionar un movimiento aleatorio de los movimientos válidos
+        const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+        const currentPosition = randomMove[0];
+        const targetPosition = randomMove[1];
+
+        // Ejecutar el movimiento en la interfaz
+        const currentBlock = document.getElementById(currentPosition);
+        const targetBlock = document.getElementById(targetPosition);
+        const pieceName = currentBlock.innerText.slice(1);
+
+        targetBlock.innerText = pieceName;
+        targetBlock.innerHTML =
+            `${turn + pieceName}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turn + pieceName}.png?raw=true" alt="${turn + pieceName}">`;
+        targetBlock.style.cursor = 'pointer';
+
+        currentBlock.innerText = '';
+        currentBlock.style.cursor = 'default';
+
+        // Verificar si hay ganador después del movimiento
+        const winnerResult = winner();
+        if (winnerResult === 1) {
+            alert("Black Wins", true);
+        } else if (winnerResult === 2) {
+            alert("White Wins", true);
+        } else {
+            toggleTurn();
+            machineTurn = false;
+        }
+    }
 
     //Color the bloques and remove hint moves
     function coloring() {
@@ -725,31 +824,55 @@
 
     //Moves the piece to the selected bloque
     function movePiece(moves, pieceName, position) {
-        document.querySelectorAll('.bloque').forEach(bloque => {
-            bloque.addEventListener('click', function() {
-                moves.forEach(move => {
-                    if (bloque.id === move) {
-                        bloque.innerText = pieceName;
-                        bloque.innerHTML =
-                            `${turn + bloque.innerText}<img class='img' src="https://github.com/TwickE/ChessGame/blob/main/images/${turn + bloque.innerText}.png?raw=true" alt="${turn + bloque.innerText}">`;
-                        bloque.style.cursor = 'pointer';
-                        const previousbloque = document.getElementById(position);
-                        previousbloque.innerText = "";
-                        previousbloque.style.cursor = "default";
-                        if (winner() === 1) {
-                            alert("Black Wins", true);
-                        } else if (winner() === 2) {
-                            alert("White Wins", true);
+        if (gameMode === "machine" && turn === "B") {
+            // Si es el turno de la máquina, seleccionar un movimiento aleatorio de los movimientos válidos
+            const randomIndex = Math.floor(Math.random() * moves.length);
+            const selectedMove = moves[randomIndex];
+            const selectedBlock = document.getElementById(selectedMove);
+            selectedBlock.innerText = pieceName;
+            selectedBlock.innerHTML =
+                `${turn + selectedBlock.innerText}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turn + selectedBlock.innerText}.png?raw=true" alt="${turn + selectedBlock.innerText}">`;
+            selectedBlock.style.cursor = 'pointer';
+
+            const previousBlock = document.getElementById(position);
+            previousBlock.innerText = "";
+            previousBlock.style.cursor = "default";
+            
+            if (winner() === 1) {
+                alert("Black Wins", true);
+            } else if (winner() === 2) {
+                alert("White Wins", true);
+            } else {
+                toggleTurn();
+            }
+        } else {
+            // Si no es el turno de la máquina, esperar al clic del usuario
+            document.querySelectorAll('.bloque').forEach(bloque => {
+                bloque.addEventListener('click', function() {
+                    moves.forEach(move => {
+                        if (bloque.id === move) {
+                            bloque.innerText = pieceName;
+                            bloque.innerHTML =
+                                `${turn + bloque.innerText}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turn + bloque.innerText}.png?raw=true" alt="${turn + bloque.innerText}">`;
+                            bloque.style.cursor = 'pointer';
+                            const previousBlock = document.getElementById(position);
+                            previousBlock.innerText = "";
+                            previousBlock.style.cursor = "default";
+                            if (winner() === 1) {
+                                alert("Black Wins", true);
+                            } else if (winner() === 2) {
+                                alert("White Wins", true);
+                            } else {
+                                toggleTurn();
+                            }
+                            moves = [];
                         } else {
-                            toggleTurn(turn);
+                            moves = [];
                         }
-                        moves = [];
-                    } else {
-                        moves = [];
-                    }
+                    });
                 });
             });
-        });
+        }
     }
 
     //Creates an alert
