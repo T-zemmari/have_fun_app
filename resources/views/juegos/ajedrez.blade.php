@@ -246,12 +246,18 @@
     // Function to set game mode
     document.getElementById("modeIndividual").addEventListener("click", () => {
         gameMode = "individual";
-        alert("Modo Individual seleccionado");
+        Swal.fire({
+            html:`<h4>Modo Individual seleccionado</h4>`,
+            icon:'info',
+        })
     });
 
     document.getElementById("modeMachine").addEventListener("click", () => {
         gameMode = "machine";
-        alert("Modo Contra la Máquina seleccionado");
+        Swal.fire({
+            html:`<h4>Modo Contra la Máquina seleccionado</h4>`,
+            icon:'info',
+        })
         if (turn === "B") {
             // Si es el turno de la máquina, que juegue automáticamente
             setTimeout(machineMove, 1000); // Llamada a la función para mover la máquina después de un segundo
@@ -294,9 +300,9 @@
         // Verificar si hay ganador después del movimiento
         const winnerResult = winner();
         if (winnerResult === 1) {
-            alert("Black Wins", true);
+            fn_alert("Ganan las Negras", true);
         } else if (winnerResult === 2) {
-            alert("White Wins", true);
+            fn_alert("Ganan las Blancas", true);
         } else {
             toggleTurn();
             machineTurn = false;
@@ -839,9 +845,9 @@
             previousBlock.style.cursor = "default";
             
             if (winner() === 1) {
-                alert("Black Wins", true);
+                fn_alert("Ganan las Negras", true);
             } else if (winner() === 2) {
-                alert("White Wins", true);
+                fn_alert("Ganan las Blancas", true);
             } else {
                 toggleTurn();
             }
@@ -859,9 +865,9 @@
                             previousBlock.innerText = "";
                             previousBlock.style.cursor = "default";
                             if (winner() === 1) {
-                                alert("Black Wins", true);
+                                fn_alert("Ganan las Negras", true);
                             } else if (winner() === 2) {
-                                alert("White Wins", true);
+                                fn_alert("Ganan las Blancas", true);
                             } else {
                                 toggleTurn();
                             }
@@ -875,18 +881,18 @@
         }
     }
 
-    //Creates an alert
-    function alert(text, end) {
+    //Creates an fn_alert
+    function fn_alert(text, end) {
         const alert = document.querySelector('.container-turn');
         alert.style.visibility = 'visible';
         alert.style.opacity = '1';
 
         const imgTurn = document.getElementById('imgTurn');
-        if (text === "White's Turn" || text === "White Wins") {
-            imgTurn.src = "https://github.com/TwickE/ChessGame/blob/main/images/Wking.png?raw=true";
+        if (text === "Turno Blancas" || text === "Ganan las Blancas") {
+            imgTurn.src = "/assets/imgs/Piezas_ajedrez/Wking.png";
             imgTurn.alt = "Wking";
         } else {
-            imgTurn.src = "https://github.com/TwickE/ChessGame/blob/main/images/Bking.png?raw=true";
+            imgTurn.src = "/assets/imgs/Piezas_ajedrez/Bking.png";
             imgTurn.alt = "Bking";
         }
 
@@ -911,10 +917,10 @@
     function toggleTurn() {
         if (turn === "W") {
             turn = "B";
-            alert("Black's Turn", false)
+            fn_alert("Turno Negras", false)
         } else {
             turn = "W";
-            alert("White's Turn", false)
+            fn_alert("Turno Blancas", false)
         }
     }
 
