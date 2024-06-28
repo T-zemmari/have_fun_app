@@ -4,13 +4,13 @@
 
     <section class="w-full h-screen flex justify-center">
 
-        <div class="w-full h-[300px] md:p-10 max-w-7xl min-h-[80%] flex flex-row flex-wrap justify-start items-start mt-[10em] gap-4">
+        <div class="w-full md:p-10 max-w-7xl flex flex-row flex-wrap justify-start items-start mt-[10em] gap-4">
             <div
-                class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow flex flex-col justify-center items-center">
-                <a href="{{ route('tetris_one') }}">
-                    <img class="p-8 rounded-t-lg h-[200px]" src="{{ asset('assets/imgs/tetris_1.png') }}" alt="tetris_1" />
+                class="card_game w-[400px] h-[300px] bg-white border border-gray-200 rounded-lg shadow flex flex-col justify-center items-center">
+                <a href="{{ route('tetris_one') }}" class="h-[200px]">
+                    <img class="p-8 rounded-t-lg w-[100%] h-[100%] object-cover" src="{{ asset('assets/imgs/tetris_1.png') }}" alt="tetris_1" />
                 </a>
-                <div class="w-full px-5 pb-5">
+                <div class="w-full px-5 pb-5 h-[100px]">
                     <a href="{{ route('tetris_one') }}">
                         <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Tetris</h5>
                     </a>
@@ -24,11 +24,11 @@
             </div>
 
             <div
-                class="w-full h-[300px] max-w-sm bg-white border border-gray-200 rounded-lg shadow flex flex-col justify-center items-center">
-                <a href="{{ route('ajedrez') }}">
-                    <img class="p-8 rounded-t-lg h-[200px]" src="{{ asset('assets/imgs/chess_1.png') }}" alt="chess_1" />
+                class="card_game w-[400px] h-[300px] bg-white border border-gray-200 rounded-lg shadow flex flex-col justify-center items-center">
+                <a href="{{ route('ajedrez') }}" class="h-[200px]">
+                    <img class="p-8 rounded-t-lg w-[100%] h-[100%] object-cover" src="{{ asset('assets/imgs/chess_1.png') }}" alt="chess_1" />
                 </a>
-                <div class="w-full px-5 pb-5">
+                <div class="w-full px-5 pb-5 h-[100px]">
                     <a href="{{ route('ajedrez') }}">
                         <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Ajedrez</h5>
                     </a>
