@@ -2,7 +2,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600&display=swap');
 
     .container-turno {
-        width: 250px;
+        width: 350px;
         height: 120px;
         display: flex;
         flex-direction: column;
@@ -76,16 +76,16 @@
 
     .img {
         width: 60px;
-        position: relative;
+        posicion: relative;
         bottom: 5px;
     }
 
     .hintMove {
-        background: url(https://github.com/TwickE/ChessGame/blob/main/images/HintMove.png?raw=true);
+        background: url(/assets/imgs/Piezas_ajedrez/HintMove.png);
     }
 
     .hintEat {
-        background: url(https://github.com/TwickE/ChessGame/blob/main/images/HintEat.png?raw=true);
+        background: url(/assets/imgs/Piezas_ajedrez/HintEat.png);
     }
 
     @media (max-width:650px) {
@@ -150,26 +150,9 @@
             <h2 id="turno"></h2>
         </section>
 
-        <h1>Chess Game</h1>
-        <div class="w-full max-w-2xl flex justify-between items-center px-4 mt-10">
-            <button id="modeIndividual"
-                class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white  focus:ring-4 focus:outline-none focus:ring-purple-200 ">
-                <span
-                    class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-                    Modo Individual
-                </span>
-            </button>
-            <button id="modeMachine"
-                class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white  focus:ring-4 focus:outline-none focus:ring-pink-200 ">
-                <span
-                    class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-                    Modo Contra la Máquina
-                </span>
-            </button>
-        </div>
-
-        <div class="w-[100%] flex justify-center items-center">
-            <table>
+        <h1>Ajedrez</h1>
+        <div class="w-[100%] flex justify-center items-center flex-col">
+            <table class="mt-12">
                 <tbody>
                     @php
                         $filas = ['8', '7', '6', '5', '4', '3', '2', '1'];
@@ -232,7 +215,25 @@
                     </tr>
                 </tbody>
             </table>
+            <div class="w-full max-w-2xl flex justify-between items-center px-4 -mt-5">
+                <button id="modo_individual"
+                    class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white  focus:ring-4 focus:outline-none focus:ring-purple-200 ">
+                    <span
+                        class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                        Modo Individual
+                    </span>
+                </button>
+                <button id="modo_machine"
+                    class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white  focus:ring-4 focus:outline-none focus:ring-pink-200 ">
+                    <span
+                        class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                        Modo Contra la Máquina
+                    </span>
+                </button>
+            </div>
         </div>
+
+
 
     </section>
 
@@ -242,31 +243,32 @@
 <script>
     const pieza_seleccionada = "#f4f774"
     let turno = "W";
-    let gameMode = 'individual';
+    let modo_de_juego = 'individual';
     // Function to set game mode
-    document.getElementById("modeIndividual").addEventListener("click", () => {
-        gameMode = "individual";
+    document.getElementById("modo_individual").addEventListener("click", () => {
+        modo_de_juego = "individual";
         Swal.fire({
             html: `<h4>Modo Individual seleccionado</h4>`,
             icon: 'info',
         })
     });
 
-    document.getElementById("modeMachine").addEventListener("click", () => {
-        gameMode = "machine";
+    document.getElementById("modo_machine").addEventListener("click", () => {
+        modo_de_juego = "machine";
         Swal.fire({
             html: `<h4>Modo Contra la Máquina seleccionado</h4>`,
             icon: 'info',
         })
         if (turno === "B") {
             // Si es el turno de la máquina, que juegue automáticamente
-            setTimeout(machineMove, 1000); // Llamada a la función para mover la máquina después de un segundo
+            setTimeout(movimientos_de_la_maquina,
+                1000); // Llamada a la función para mover la máquina después de un segundo
         }
     });
 
 
-    //Color the bloques and remove hint moves
-    function coloring() {
+    //Color the bloques and remove hint movimientos
+    function fn_colorear_bloques() {
         const bloques = document.querySelectorAll('.bloque');
         let isEvenRow = false;
         let counter = 0;
@@ -289,50 +291,51 @@
             counter++;
         });
     }
-    coloring();
+    fn_colorear_bloques();
 
     //Inserting the Images
-    function insertImage() {
+    function insertar_imagen() {
         document.querySelectorAll('.bloque').forEach(image => {
             if (image.innerText.length !== 0) {
                 image.innerHTML =
-                    `${image.innerText}<img class='img' src="/assets/imgs/Piezas_ajedrez/${image.innerText}.png?raw=true" alt="${image.innerText}">`;
+                    `${image.innerText}<img class='img' src="/assets/imgs/Piezas_ajedrez/${image.innerText}.png" alt="${image.innerText}">`;
                 image.style.cursor = 'pointer';
             }
         });
     }
-    insertImage();
+    insertar_imagen();
 
 
     document.querySelectorAll('.bloque').forEach(bloque => {
         bloque.addEventListener('click', function() {
-            coloring();
+            fn_colorear_bloques();
             if (bloque.innerText.length !== 0) {
                 if (bloque.innerText[0] === turno) {
                     bloque.style.backgroundColor = pieza_seleccionada;
-                    const pieceName = bloque.innerText.slice(1);
-                    const position = bloque.id;
-                    console.log(pieceName, position);
-                    const moves = hintMoves(pieceName, position);
-                    movePiece(moves, pieceName, position);
+                    const nombre_de_la_piez = bloque.innerText.slice(1);
+                    const posicion = bloque.id;
+                    console.log(nombre_de_la_piez, posicion);
+                    const movimientos = movimientos_de_golpeo(nombre_de_la_piez, posicion);
+                    fn_mover_pieza(movimientos, nombre_de_la_piez, posicion);
+
                 }
             }
         });
     });
 
     //Give the hints to where the pieces can move
-    function hintMoves(pieceName, position) {
-        const moves = [];
-        //convert position to coordinates
-        const letters = ["a", "b", "c", "d", "e", "f", "g", "h"];
-        const row = parseInt(position[0]);
-        const col = letters.indexOf(position[1]) + 1;
+    function movimientos_de_golpeo(nombre_de_la_piez, posicion) {
+        const movimientos = [];
+        //convert posicion to coordinates
+        const lettras = ["a", "b", "c", "d", "e", "f", "g", "h"];
+        const row = parseInt(posicion[0]);
+        const col = lettras.indexOf(posicion[1]) + 1;
         console.log(row, col);
-        console.log(pieceName);
+        console.log(nombre_de_la_piez);
 
         //PAWN
-        if (pieceName === "pawn") {
-            //check if pawn is on starting position
+        if (nombre_de_la_piez === "pawn") {
+            //check if pawn is on starting posicion
             let isFirstMove = false;
             if (row === 2 && turno === "W") {
                 isFirstMove = true;
@@ -340,27 +343,27 @@
                 isFirstMove = true;
             }
 
-            //calculate possible moves
+            //calculate possible movimientos
             if (isFirstMove && turno === "W") {
                 //can move one or two bloques forward
-                if (checkForPiece(`${row + 1}${letters[col - 1]}`, turno) === "noPiece") {
-                    moves.push([row + 1, col]);
+                if (fn_buscar_pieza(`${row + 1}${lettras[col - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([row + 1, col]);
                 }
-                if (checkForPiece(`${row + 2}${letters[col - 1]}`, turno) === "noPiece") {
-                    moves.push([row + 2, col]);
+                if (fn_buscar_pieza(`${row + 2}${lettras[col - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([row + 2, col]);
                 }
 
                 //can move one bloque diagonally forward if there is an enemy piece to eat
                 try {
-                    if (checkForPiece(`${row + 1}${letters[col - 2]}`, turno) === "pieceEnemy") {
-                        moves.push([row + 1, col - 1]);
+                    if (fn_buscar_pieza(`${row + 1}${lettras[col - 2]}`, turno) === "pieza_enemiga") {
+                        movimientos.push([row + 1, col - 1]);
                     }
                 } catch (err) {
                     console.log(err);
                 }
                 try {
-                    if (checkForPiece(`${row + 1}${letters[col]}`, turno) === "pieceEnemy") {
-                        moves.push([row + 1, col + 1]);
+                    if (fn_buscar_pieza(`${row + 1}${lettras[col]}`, turno) === "pieza_enemiga") {
+                        movimientos.push([row + 1, col + 1]);
                     }
                 } catch (err) {
                     console.log(err);
@@ -368,21 +371,21 @@
 
             } else if (turno === "W") {
                 //can move one bloque forward
-                if (checkForPiece(`${row + 1}${letters[col - 1]}`, turno) === "noPiece") {
-                    moves.push([row + 1, col]);
+                if (fn_buscar_pieza(`${row + 1}${lettras[col - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([row + 1, col]);
                 }
 
                 //can move one bloque diagonally forward if there is an enemy piece to eat
                 try {
-                    if (checkForPiece(`${row + 1}${letters[col - 2]}`, turno) === "pieceEnemy") {
-                        moves.push([row + 1, col - 1]);
+                    if (fn_buscar_pieza(`${row + 1}${lettras[col - 2]}`, turno) === "pieza_enemiga") {
+                        movimientos.push([row + 1, col - 1]);
                     }
                 } catch (err) {
                     console.log(err);
                 }
                 try {
-                    if (checkForPiece(`${row + 1}${letters[col]}`, turno) === "pieceEnemy") {
-                        moves.push([row + 1, col + 1]);
+                    if (fn_buscar_pieza(`${row + 1}${lettras[col]}`, turno) === "pieza_enemiga") {
+                        movimientos.push([row + 1, col + 1]);
                     }
                 } catch (err) {
                     console.log(err);
@@ -390,45 +393,45 @@
             }
             if (isFirstMove && turno === "B") {
                 //can move one or two bloques forward
-                if (checkForPiece(`${row - 1}${letters[col - 1]}`, turno) === "noPiece") {
-                    moves.push([row - 1, col]);
+                if (fn_buscar_pieza(`${row - 1}${lettras[col - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([row - 1, col]);
                 }
-                if (checkForPiece(`${row - 2}${letters[col - 1]}`, turno) === "noPiece") {
-                    moves.push([row - 2, col]);
+                if (fn_buscar_pieza(`${row - 2}${lettras[col - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([row - 2, col]);
                 }
 
                 //can move one bloque diagonally forward if there is an enemy piece to eat
                 try {
-                    if (checkForPiece(`${row - 1}${letters[col - 2]}`, turno) === "pieceEnemy") {
-                        moves.push([row - 1, col - 1]);
+                    if (fn_buscar_pieza(`${row - 1}${lettras[col - 2]}`, turno) === "pieza_enemiga") {
+                        movimientos.push([row - 1, col - 1]);
                     }
                 } catch (err) {
                     console.log(err);
                 }
                 try {
-                    if (checkForPiece(`${row - 1}${letters[col]}`, turno) === "pieceEnemy") {
-                        moves.push([row - 1, col + 1]);
+                    if (fn_buscar_pieza(`${row - 1}${lettras[col]}`, turno) === "pieza_enemiga") {
+                        movimientos.push([row - 1, col + 1]);
                     }
                 } catch (err) {
                     console.log(err);
                 }
             } else if (turno === "B") {
                 //can move one bloque forward
-                if (checkForPiece(`${row - 1}${letters[col - 1]}`, turno) === "noPiece") {
-                    moves.push([row - 1, col]);
+                if (fn_buscar_pieza(`${row - 1}${lettras[col - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([row - 1, col]);
                 }
 
                 //can move one bloque diagonally forward if there is an enemy piece to eat
                 try {
-                    if (checkForPiece(`${row - 1}${letters[col - 2]}`, turno) === "pieceEnemy") {
-                        moves.push([row - 1, col - 1]);
+                    if (fn_buscar_pieza(`${row - 1}${lettras[col - 2]}`, turno) === "pieza_enemiga") {
+                        movimientos.push([row - 1, col - 1]);
                     }
                 } catch (err) {
                     console.log(err);
                 }
                 try {
-                    if (checkForPiece(`${row - 1}${letters[col]}`, turno) === "pieceEnemy") {
-                        moves.push([row - 1, col + 1]);
+                    if (fn_buscar_pieza(`${row - 1}${lettras[col]}`, turno) === "pieza_enemiga") {
+                        movimientos.push([row - 1, col + 1]);
                     }
                 } catch (err) {
                     console.log(err);
@@ -437,13 +440,13 @@
         }
 
         //ROOK
-        if (pieceName === "rook") {
+        if (nombre_de_la_piez === "rook") {
             //can move to the top
             for (let i = row + 1; i <= 8; i++) {
-                if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "noPiece") {
-                    moves.push([i, col]);
-                } else if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([i, col]);
+                if (fn_buscar_pieza(`${i}${lettras[col - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([i, col]);
+                } else if (fn_buscar_pieza(`${i}${lettras[col - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([i, col]);
                     break;
                 } else {
                     break;
@@ -451,10 +454,10 @@
             }
             //can move to the bottom
             for (let i = row - 1; i >= 1; i--) {
-                if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "noPiece") {
-                    moves.push([i, col]);
-                } else if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([i, col]);
+                if (fn_buscar_pieza(`${i}${lettras[col - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([i, col]);
+                } else if (fn_buscar_pieza(`${i}${lettras[col - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([i, col]);
                     break;
                 } else {
                     break;
@@ -462,10 +465,10 @@
             }
             //can move to the right
             for (let i = col + 1; i <= 8; i++) {
-                if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "noPiece") {
-                    moves.push([row, i]);
-                } else if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([row, i]);
+                if (fn_buscar_pieza(`${row}${lettras[i - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([row, i]);
+                } else if (fn_buscar_pieza(`${row}${lettras[i - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([row, i]);
                     break;
                 } else {
                     break;
@@ -473,10 +476,10 @@
             }
             //can move to the left
             for (let i = col - 1; i >= 1; i--) {
-                if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "noPiece") {
-                    moves.push([row, i]);
-                } else if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([row, i]);
+                if (fn_buscar_pieza(`${row}${lettras[i - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([row, i]);
+                } else if (fn_buscar_pieza(`${row}${lettras[i - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([row, i]);
                     break;
                 } else {
                     break;
@@ -486,67 +489,67 @@
         }
 
         //KNIGHT
-        if (pieceName === "knight") {
+        if (nombre_de_la_piez === "knight") {
             //can move two bloques up and one bloque to the right
             try {
-                if (checkForPiece(`${row + 2}${letters[col]}`, turno) !== "pieceTeam") {
-                    moves.push([row + 2, col + 1]);
+                if (fn_buscar_pieza(`${row + 2}${lettras[col]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row + 2, col + 1]);
                 }
             } catch (err) {
                 console.log(err);
             }
             //can move two bloques up and one bloque to the left
             try {
-                if (checkForPiece(`${row + 2}${letters[col - 2]}`, turno) !== "pieceTeam") {
-                    moves.push([row + 2, col - 1]);
+                if (fn_buscar_pieza(`${row + 2}${lettras[col - 2]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row + 2, col - 1]);
                 }
             } catch (err) {
                 console.log(err);
             }
             //can move two bloques down and one bloque to the right
             try {
-                if (checkForPiece(`${row - 2}${letters[col]}`, turno) !== "pieceTeam") {
-                    moves.push([row - 2, col + 1]);
+                if (fn_buscar_pieza(`${row - 2}${lettras[col]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row - 2, col + 1]);
                 }
             } catch (err) {
                 console.log(err);
             }
             //can move two bloques down and one bloque to the left
             try {
-                if (checkForPiece(`${row - 2}${letters[col - 2]}`, turno) !== "pieceTeam") {
-                    moves.push([row - 2, col - 1]);
+                if (fn_buscar_pieza(`${row - 2}${lettras[col - 2]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row - 2, col - 1]);
                 }
             } catch (err) {
                 console.log(err);
             }
             //can move one bloque up and two bloques to the right
             try {
-                if (checkForPiece(`${row + 1}${letters[col + 1]}`, turno) !== "pieceTeam") {
-                    moves.push([row + 1, col + 2]);
+                if (fn_buscar_pieza(`${row + 1}${lettras[col + 1]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row + 1, col + 2]);
                 }
             } catch (err) {
                 console.log(err);
             }
             //can move one bloque up and two bloques to the left
             try {
-                if (checkForPiece(`${row + 1}${letters[col - 3]}`, turno) !== "pieceTeam") {
-                    moves.push([row + 1, col - 2]);
+                if (fn_buscar_pieza(`${row + 1}${lettras[col - 3]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row + 1, col - 2]);
                 }
             } catch (err) {
                 console.log(err);
             }
             //can move one bloque down and two bloques to the right
             try {
-                if (checkForPiece(`${row - 1}${letters[col + 1]}`, turno) !== "pieceTeam") {
-                    moves.push([row - 1, col + 2]);
+                if (fn_buscar_pieza(`${row - 1}${lettras[col + 1]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row - 1, col + 2]);
                 }
             } catch (err) {
                 console.log(err);
             }
             //can move one bloque down and two bloques to the left
             try {
-                if (checkForPiece(`${row - 1}${letters[col - 3]}`, turno) !== "pieceTeam") {
-                    moves.push([row - 1, col - 2]);
+                if (fn_buscar_pieza(`${row - 1}${lettras[col - 3]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row - 1, col - 2]);
                 }
             } catch (err) {
                 console.log(err);
@@ -554,13 +557,13 @@
         }
 
         //BISHOP
-        if (pieceName === "bishop") {
+        if (nombre_de_la_piez === "bishop") {
             //can move to the top right
             for (let i = row + 1, j = col + 1; i <= 8 && j <= 8; i++, j++) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
-                    moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([i, j]);
+                if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([i, j]);
+                } else if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([i, j]);
                     break;
                 } else {
                     break;
@@ -568,10 +571,10 @@
             }
             //can move to the top left
             for (let i = row + 1, j = col - 1; i <= 8 && j >= 1; i++, j--) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
-                    moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([i, j]);
+                if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([i, j]);
+                } else if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([i, j]);
                     break;
                 } else {
                     break;
@@ -579,10 +582,10 @@
             }
             //can move to the bottom right
             for (let i = row - 1, j = col + 1; i >= 1 && j <= 8; i--, j++) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
-                    moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([i, j]);
+                if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([i, j]);
+                } else if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([i, j]);
                     break;
                 } else {
                     break;
@@ -590,10 +593,10 @@
             }
             //can move to the bottom left
             for (let i = row - 1, j = col - 1; i >= 1 && j >= 1; i--, j--) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
-                    moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([i, j]);
+                if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([i, j]);
+                } else if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([i, j]);
                     break;
                 } else {
                     break;
@@ -602,13 +605,13 @@
         }
 
         //QUEEN
-        if (pieceName === "queen") {
+        if (nombre_de_la_piez === "queen") {
             //can move to the top right
             for (let i = row + 1, j = col + 1; i <= 8 && j <= 8; i++, j++) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
-                    moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([i, j]);
+                if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([i, j]);
+                } else if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([i, j]);
                     break;
                 } else {
                     break;
@@ -616,10 +619,10 @@
             }
             //can move to the top left
             for (let i = row + 1, j = col - 1; i <= 8 && j >= 1; i++, j--) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
-                    moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([i, j]);
+                if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([i, j]);
+                } else if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([i, j]);
                     break;
                 } else {
                     break;
@@ -627,10 +630,10 @@
             }
             //can move to the bottom right
             for (let i = row - 1, j = col + 1; i >= 1 && j <= 8; i--, j++) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
-                    moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([i, j]);
+                if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([i, j]);
+                } else if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([i, j]);
                     break;
                 } else {
                     break;
@@ -638,10 +641,10 @@
             }
             //can move to the bottom left
             for (let i = row - 1, j = col - 1; i >= 1 && j >= 1; i--, j--) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
-                    moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([i, j]);
+                if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([i, j]);
+                } else if (fn_buscar_pieza(`${i}${lettras[j - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([i, j]);
                     break;
                 } else {
                     break;
@@ -649,10 +652,10 @@
             }
             //can move to the top
             for (let i = row + 1; i <= 8; i++) {
-                if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "noPiece") {
-                    moves.push([i, col]);
-                } else if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([i, col]);
+                if (fn_buscar_pieza(`${i}${lettras[col - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([i, col]);
+                } else if (fn_buscar_pieza(`${i}${lettras[col - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([i, col]);
                     break;
                 } else {
                     break;
@@ -660,10 +663,10 @@
             }
             //can move to the bottom
             for (let i = row - 1; i >= 1; i--) {
-                if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "noPiece") {
-                    moves.push([i, col]);
-                } else if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([i, col]);
+                if (fn_buscar_pieza(`${i}${lettras[col - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([i, col]);
+                } else if (fn_buscar_pieza(`${i}${lettras[col - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([i, col]);
                     break;
                 } else {
                     break;
@@ -671,10 +674,10 @@
             }
             //can move to the right
             for (let i = col + 1; i <= 8; i++) {
-                if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "noPiece") {
-                    moves.push([row, i]);
-                } else if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([row, i]);
+                if (fn_buscar_pieza(`${row}${lettras[i - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([row, i]);
+                } else if (fn_buscar_pieza(`${row}${lettras[i - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([row, i]);
                     break;
                 } else {
                     break;
@@ -682,10 +685,10 @@
             }
             //can move to the left
             for (let i = col - 1; i >= 1; i--) {
-                if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "noPiece") {
-                    moves.push([row, i]);
-                } else if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "pieceEnemy") {
-                    moves.push([row, i]);
+                if (fn_buscar_pieza(`${row}${lettras[i - 1]}`, turno) === "no_hay_pieza") {
+                    movimientos.push([row, i]);
+                } else if (fn_buscar_pieza(`${row}${lettras[i - 1]}`, turno) === "pieza_enemiga") {
+                    movimientos.push([row, i]);
                     break;
                 } else {
                     break;
@@ -694,87 +697,87 @@
         }
 
         //KING
-        if (pieceName === "king") {
+        if (nombre_de_la_piez === "king") {
             //can move one bloque to the top right
             if (row + 1 <= 8 && col + 1 <= 8) {
-                if (checkForPiece(`${row + 1}${letters[col]}`, turno) !== "pieceTeam") {
-                    moves.push([row + 1, col + 1]);
+                if (fn_buscar_pieza(`${row + 1}${lettras[col]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row + 1, col + 1]);
                 }
             }
             //can move one bloque to the top left
             if (row + 1 <= 8 && col - 1 >= 1) {
-                if (checkForPiece(`${row + 1}${letters[col - 2]}`, turno) !== "pieceTeam") {
-                    moves.push([row + 1, col - 1]);
+                if (fn_buscar_pieza(`${row + 1}${lettras[col - 2]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row + 1, col - 1]);
                 }
             }
             //can move one bloque to the bottom right
             if (row - 1 >= 1 && col + 1 <= 8) {
-                if (checkForPiece(`${row - 1}${letters[col]}`, turno) !== "pieceTeam") {
-                    moves.push([row - 1, col + 1]);
+                if (fn_buscar_pieza(`${row - 1}${lettras[col]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row - 1, col + 1]);
                 }
             }
             //can move one bloque to the bottom left
             if (row - 1 >= 1 && col - 1 >= 1) {
-                if (checkForPiece(`${row - 1}${letters[col - 2]}`, turno) !== "pieceTeam") {
-                    moves.push([row - 1, col - 1]);
+                if (fn_buscar_pieza(`${row - 1}${lettras[col - 2]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row - 1, col - 1]);
                 }
             }
             //can move one bloque to the top
             if (row + 1 <= 8) {
-                if (checkForPiece(`${row + 1}${letters[col - 1]}`, turno) !== "pieceTeam") {
-                    moves.push([row + 1, col]);
+                if (fn_buscar_pieza(`${row + 1}${lettras[col - 1]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row + 1, col]);
                 }
             }
             //can move one bloque to the bottom
             if (row - 1 >= 1) {
-                if (checkForPiece(`${row - 1}${letters[col - 1]}`, turno) !== "pieceTeam") {
-                    moves.push([row - 1, col]);
+                if (fn_buscar_pieza(`${row - 1}${lettras[col - 1]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row - 1, col]);
                 }
             }
             //can move one bloque to the right
             if (col + 1 <= 8) {
-                if (checkForPiece(`${row}${letters[col]}`, turno) !== "pieceTeam") {
-                    moves.push([row, col + 1]);
+                if (fn_buscar_pieza(`${row}${lettras[col]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row, col + 1]);
                 }
             }
             //can move one bloque to the left
             if (col - 1 >= 1) {
-                if (checkForPiece(`${row}${letters[col - 2]}`, turno) !== "pieceTeam") {
-                    moves.push([row, col - 1]);
+                if (fn_buscar_pieza(`${row}${lettras[col - 2]}`, turno) !== "mi_pieza") {
+                    movimientos.push([row, col - 1]);
                 }
             }
         }
 
-        //convert coordinates back to position format
-        const validMoves = [];
-        moves.forEach(move => {
+        //convert coordinates back to posicion format
+        const validar_movimientos = [];
+        movimientos.forEach(move => {
             const row = move[0];
             const col = move[1];
-            const position = `${row}${letters[col - 1]}`;
-            validMoves.push(position);
+            const posicion = `${row}${lettras[col - 1]}`;
+            validar_movimientos.push(posicion);
         });
-        giveHints(validMoves);
-        console.log(validMoves);
-        return validMoves;
+        sugerencias_de_golpeo(validar_movimientos);
+        console.log(validar_movimientos);
+        return validar_movimientos;
     }
 
     //Check if there is a piece on the bloque and if it is an enemy piece
-    function checkForPiece(position, myColor) {
-        const bloque = document.getElementById(position);
+    function fn_buscar_pieza(posicion, myColor) {
+        const bloque = document.getElementById(posicion);
         if (bloque.innerText.length !== 0) {
             if (bloque.innerText[0] !== myColor) {
-                return "pieceEnemy";
+                return "pieza_enemiga";
             } else {
-                return "pieceTeam";
+                return "mi_pieza";
             }
         } else {
-            return "noPiece";
+            return "no_hay_pieza";
         }
     }
 
-    //Give hints to the valid moves
-    function giveHints(validMoves) {
-        validMoves.forEach(move => {
+    //Give hints to the valid movimientos
+    function sugerencias_de_golpeo(validar_movimientos) {
+        validar_movimientos.forEach(move => {
             const bloque = document.getElementById(move);
             if (bloque.innerText.length !== 0) {
                 bloque.classList.add('hintEat');
@@ -785,98 +788,98 @@
     }
 
 
-    function machineMove() {
-        machineTurn = true;
+    function movimientos_de_la_maquina() {
+        turno_de_la_maquina = true;
         const bloques = document.querySelectorAll('.bloque');
-        const validMoves = [];
+        const validar_movimientos = [];
 
         // Recolectar todos los movimientos válidos para la máquina
         bloques.forEach(bloque => {
             if (bloque.innerText.length !== 0 && bloque.innerText[0] === turno) {
-                const pieceName = bloque.innerText.slice(1);
-                const position = bloque.id;
-                const moves = hintMoves(pieceName, position);
-                validMoves.push(...moves.map(move => [position, move]));
+                const nombre_de_la_piez = bloque.innerText.slice(1);
+                const posicion = bloque.id;
+                const movimientos = movimientos_de_golpeo(nombre_de_la_piez, posicion);
+                validar_movimientos.push(...movimientos.map(move => [posicion, move]));
             }
         });
 
         // Seleccionar un movimiento aleatorio de los movimientos válidos
-        const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
-        const currentPosition = randomMove[0];
-        const targetPosition = randomMove[1];
+        const movimiento_random = validar_movimientos[Math.floor(Math.random() * validar_movimientos.length)];
+        const posicion_actual = movimiento_random[0];
+        const movimiento_futuro = movimiento_random[1];
 
         // Ejecutar el movimiento en la interfaz
-        const currentBlock = document.getElementById(currentPosition);
-        const targetBlock = document.getElementById(targetPosition);
-        const pieceName = currentBlock.innerText.slice(1);
+        const bloque_actual = document.getElementById(posicion_actual);
+        const bloque_futuro = document.getElementById(movimiento_futuro);
+        const nombre_de_la_piez = bloque_actual.innerText.slice(1);
 
-        targetBlock.innerText = pieceName;
-        targetBlock.innerHTML =
-            `${turno + pieceName}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turno + pieceName}.png?raw=true" alt="${turno + pieceName}">`;
-        targetBlock.style.cursor = 'pointer';
+        bloque_futuro.innerText = nombre_de_la_piez;
+        bloque_futuro.innerHTML =
+            `${turno + nombre_de_la_piez}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turno + nombre_de_la_piez}.png" alt="${turno + nombre_de_la_piez}">`;
+        bloque_futuro.style.cursor = 'pointer';
 
-        currentBlock.innerText = '';
-        currentBlock.style.cursor = 'default';
+        bloque_actual.innerText = '';
+        bloque_actual.style.cursor = 'default';
 
         // Verificar si hay ganador después del movimiento
-        const winnerResult = winner();
-        if (winnerResult === 1) {
+        const resultado_ganador = fn_ganador();
+        if (resultado_ganador === 1) {
             fn_alert("Ganan las Negras", true);
-        } else if (winnerResult === 2) {
+        } else if (resultado_ganador === 2) {
             fn_alert("Ganan las Blancas", true);
         } else {
-            toggleTurn();
-            machineTurn = false;
+            fn_toggle_turno();
+            turno_de_la_maquina = false;
         }
     }
 
 
     //Moves the piece to the selected bloque
-    function movePiece(moves, pieceName, position) {
-        if (gameMode === "machine" && turno === "B") {
+    function fn_mover_pieza(movimientos, nombre_de_la_piez, posicion) {
+        if (modo_de_juego === "machine" && turno === "B") {
             // Si es el turno de la máquina, seleccionar un movimiento aleatorio de los movimientos válidos
-            const randomIndex = Math.floor(Math.random() * moves.length);
-            const selectedMove = moves[randomIndex];
-            const selectedBlock = document.getElementById(selectedMove);
-            selectedBlock.innerText = pieceName;
-            selectedBlock.innerHTML =
-                `${turno + selectedBlock.innerText}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turno + selectedBlock.innerText}.png?raw=true" alt="${turno + selectedBlock.innerText}">`;
-            selectedBlock.style.cursor = 'pointer';
+            const random_index = Math.floor(Math.random() * movimientos.length);
+            const movimiento_seleccionado = movimientos[random_index];
+            const bloque_seleccionado = document.getElementById(movimiento_seleccionado);
+            bloque_seleccionado.innerText = nombre_de_la_piez;
+            bloque_seleccionado.innerHTML =
+                `${turno + bloque_seleccionado.innerText}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turno + bloque_seleccionado.innerText}.png" alt="${turno + bloque_seleccionado.innerText}">`;
+            bloque_seleccionado.style.cursor = 'pointer';
 
-            const previousBlock = document.getElementById(position);
-            previousBlock.innerText = "";
-            previousBlock.style.cursor = "default";
+            const bloque_anterior = document.getElementById(posicion);
+            bloque_anterior.innerText = "";
+            bloque_anterior.style.cursor = "default";
 
-            if (winner() === 1) {
+            if (fn_ganador() === 1) {
                 fn_alert("Ganan las Negras", true);
-            } else if (winner() === 2) {
+            } else if (fn_ganador() === 2) {
                 fn_alert("Ganan las Blancas", true);
             } else {
-                toggleTurn();
+                fn_toggle_turno();
             }
         } else {
             // Si no es el turno de la máquina, esperar al clic del usuario
             document.querySelectorAll('.bloque').forEach(bloque => {
                 bloque.addEventListener('click', function() {
-                    moves.forEach(move => {
+                    movimientos.forEach(move => {
                         if (bloque.id === move) {
-                            bloque.innerText = pieceName;
+                            bloque.innerText = nombre_de_la_piez;
                             bloque.innerHTML =
-                                `${turno + bloque.innerText}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turno + bloque.innerText}.png?raw=true" alt="${turno + bloque.innerText}">`;
+                                `${turno + bloque.innerText}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turno + bloque.innerText}.png" alt="${turno + bloque.innerText}">`;
                             bloque.style.cursor = 'pointer';
-                            const previousBlock = document.getElementById(position);
-                            previousBlock.innerText = "";
-                            previousBlock.style.cursor = "default";
-                            if (winner() === 1) {
+                            const bloque_anterior = document.getElementById(posicion);
+                            bloque_anterior.innerText = "";
+                            bloque_anterior.style.cursor = "default";
+                            if (fn_ganador() === 1) {
                                 fn_alert("Ganan las Negras", true);
-                            } else if (winner() === 2) {
+                            } else if (fn_ganador() === 2) {
                                 fn_alert("Ganan las Blancas", true);
                             } else {
-                                toggleTurn();
+                                fn_toggle_turno();
                             }
-                            moves = [];
+                            movimientos = [];
                         } else {
-                            moves = [];
+                            movimientos = [];
                         }
                     });
                 });
@@ -917,7 +920,7 @@
     }
 
     //Toggles the turno
-    function toggleTurn() {
+    function fn_toggle_turno() {
         if (turno === "W") {
             turno = "B";
             fn_alert("Turno Negras", false)
@@ -927,21 +930,21 @@
         }
     }
 
-    //Checks if there is a winner
-    function winner() {
-        let winnerW = false;
-        let winnerB = false;
+    //Checks if there is a fn_ganador
+    function fn_ganador() {
+        let ganador_blancas = false;
+        let ganador_negras = false;
         document.querySelectorAll('.bloque').forEach(bloque => {
             if (bloque.innerText === "Wking") {
-                winnerW = true;
+                ganador_blancas = true;
             }
             if (bloque.innerText === "Bking") {
-                winnerB = true;
+                ganador_negras = true;
             }
         });
-        if (winnerW === false) {
+        if (ganador_blancas === false) {
             return 1;
-        } else if (winnerB === false) {
+        } else if (ganador_negras === false) {
             return 2;
         }
     }
