@@ -1,7 +1,7 @@
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600&display=swap');
 
-    .container-turn {
+    .container-turno {
         width: 250px;
         height: 120px;
         display: flex;
@@ -22,12 +22,12 @@
         transition: visibility 0.3s linear, opacity 0.3s linear;
     }
 
-    .container-turn img {
+    .container-turno img {
         width: 50px;
         height: 50px;
     }
 
-    #turn {
+    #turno {
         font-size: 30px;
     }
 
@@ -98,17 +98,17 @@
             transform: scale(0.8);
         }
 
-        .container-turn {
+        .container-turno {
             width: 200px;
             height: 110px;
         }
 
-        .container-turn img {
+        .container-turno img {
             width: 40px;
             height: 40px;
         }
 
-        #turn {
+        #turno {
             font-size: 25px;
         }
     }
@@ -118,17 +118,17 @@
             transform: scale(0.6);
         }
 
-        .container-turn {
+        .container-turno {
             width: 180px;
             height: 100px;
         }
 
-        .container-turn img {
+        .container-turno img {
             width: 35px;
             height: 35px;
         }
 
-        #turn {
+        #turno {
             font-size: 20px;
         }
     }
@@ -145,9 +145,9 @@
     @include('layouts.partials.navbar')
 
     <section class="w-full h-[91.1vh] flex-col flex justify-center items-center">
-        <section class="container-turn">
+        <section class="container-turno">
             <img id="imgTurn" src="" alt="">
-            <h2 id="turn"></h2>
+            <h2 id="turno"></h2>
         </section>
 
         <h1>Chess Game</h1>
@@ -240,74 +240,30 @@
 
 
 <script>
-    const pieceSelected = "#f4f774"
-    let turn = "W";
+    const pieza_seleccionada = "#f4f774"
+    let turno = "W";
     let gameMode = 'individual';
     // Function to set game mode
     document.getElementById("modeIndividual").addEventListener("click", () => {
         gameMode = "individual";
         Swal.fire({
-            html:`<h4>Modo Individual seleccionado</h4>`,
-            icon:'info',
+            html: `<h4>Modo Individual seleccionado</h4>`,
+            icon: 'info',
         })
     });
 
     document.getElementById("modeMachine").addEventListener("click", () => {
         gameMode = "machine";
         Swal.fire({
-            html:`<h4>Modo Contra la Máquina seleccionado</h4>`,
-            icon:'info',
+            html: `<h4>Modo Contra la Máquina seleccionado</h4>`,
+            icon: 'info',
         })
-        if (turn === "B") {
+        if (turno === "B") {
             // Si es el turno de la máquina, que juegue automáticamente
             setTimeout(machineMove, 1000); // Llamada a la función para mover la máquina después de un segundo
         }
     });
 
-    function machineMove() {
-        machineTurn = true;
-        const bloques = document.querySelectorAll('.bloque');
-        const validMoves = [];
-
-        // Recolectar todos los movimientos válidos para la máquina
-        bloques.forEach(bloque => {
-            if (bloque.innerText.length !== 0 && bloque.innerText[0] === turn) {
-                const pieceName = bloque.innerText.slice(1);
-                const position = bloque.id;
-                const moves = hintMoves(pieceName, position);
-                validMoves.push(...moves.map(move => [position, move]));
-            }
-        });
-
-        // Seleccionar un movimiento aleatorio de los movimientos válidos
-        const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
-        const currentPosition = randomMove[0];
-        const targetPosition = randomMove[1];
-
-        // Ejecutar el movimiento en la interfaz
-        const currentBlock = document.getElementById(currentPosition);
-        const targetBlock = document.getElementById(targetPosition);
-        const pieceName = currentBlock.innerText.slice(1);
-
-        targetBlock.innerText = pieceName;
-        targetBlock.innerHTML =
-            `${turn + pieceName}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turn + pieceName}.png?raw=true" alt="${turn + pieceName}">`;
-        targetBlock.style.cursor = 'pointer';
-
-        currentBlock.innerText = '';
-        currentBlock.style.cursor = 'default';
-
-        // Verificar si hay ganador después del movimiento
-        const winnerResult = winner();
-        if (winnerResult === 1) {
-            fn_alert("Ganan las Negras", true);
-        } else if (winnerResult === 2) {
-            fn_alert("Ganan las Blancas", true);
-        } else {
-            toggleTurn();
-            machineTurn = false;
-        }
-    }
 
     //Color the bloques and remove hint moves
     function coloring() {
@@ -352,8 +308,8 @@
         bloque.addEventListener('click', function() {
             coloring();
             if (bloque.innerText.length !== 0) {
-                if (bloque.innerText[0] === turn) {
-                    bloque.style.backgroundColor = pieceSelected;
+                if (bloque.innerText[0] === turno) {
+                    bloque.style.backgroundColor = pieza_seleccionada;
                     const pieceName = bloque.innerText.slice(1);
                     const position = bloque.id;
                     console.log(pieceName, position);
@@ -378,100 +334,100 @@
         if (pieceName === "pawn") {
             //check if pawn is on starting position
             let isFirstMove = false;
-            if (row === 2 && turn === "W") {
+            if (row === 2 && turno === "W") {
                 isFirstMove = true;
-            } else if (row === 7 && turn === "B") {
+            } else if (row === 7 && turno === "B") {
                 isFirstMove = true;
             }
 
             //calculate possible moves
-            if (isFirstMove && turn === "W") {
+            if (isFirstMove && turno === "W") {
                 //can move one or two bloques forward
-                if (checkForPiece(`${row + 1}${letters[col - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${row + 1}${letters[col - 1]}`, turno) === "noPiece") {
                     moves.push([row + 1, col]);
                 }
-                if (checkForPiece(`${row + 2}${letters[col - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${row + 2}${letters[col - 1]}`, turno) === "noPiece") {
                     moves.push([row + 2, col]);
                 }
 
                 //can move one bloque diagonally forward if there is an enemy piece to eat
                 try {
-                    if (checkForPiece(`${row + 1}${letters[col - 2]}`, turn) === "pieceEnemy") {
+                    if (checkForPiece(`${row + 1}${letters[col - 2]}`, turno) === "pieceEnemy") {
                         moves.push([row + 1, col - 1]);
                     }
                 } catch (err) {
                     console.log(err);
                 }
                 try {
-                    if (checkForPiece(`${row + 1}${letters[col]}`, turn) === "pieceEnemy") {
+                    if (checkForPiece(`${row + 1}${letters[col]}`, turno) === "pieceEnemy") {
                         moves.push([row + 1, col + 1]);
                     }
                 } catch (err) {
                     console.log(err);
                 }
 
-            } else if (turn === "W") {
+            } else if (turno === "W") {
                 //can move one bloque forward
-                if (checkForPiece(`${row + 1}${letters[col - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${row + 1}${letters[col - 1]}`, turno) === "noPiece") {
                     moves.push([row + 1, col]);
                 }
 
                 //can move one bloque diagonally forward if there is an enemy piece to eat
                 try {
-                    if (checkForPiece(`${row + 1}${letters[col - 2]}`, turn) === "pieceEnemy") {
+                    if (checkForPiece(`${row + 1}${letters[col - 2]}`, turno) === "pieceEnemy") {
                         moves.push([row + 1, col - 1]);
                     }
                 } catch (err) {
                     console.log(err);
                 }
                 try {
-                    if (checkForPiece(`${row + 1}${letters[col]}`, turn) === "pieceEnemy") {
+                    if (checkForPiece(`${row + 1}${letters[col]}`, turno) === "pieceEnemy") {
                         moves.push([row + 1, col + 1]);
                     }
                 } catch (err) {
                     console.log(err);
                 }
             }
-            if (isFirstMove && turn === "B") {
+            if (isFirstMove && turno === "B") {
                 //can move one or two bloques forward
-                if (checkForPiece(`${row - 1}${letters[col - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${row - 1}${letters[col - 1]}`, turno) === "noPiece") {
                     moves.push([row - 1, col]);
                 }
-                if (checkForPiece(`${row - 2}${letters[col - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${row - 2}${letters[col - 1]}`, turno) === "noPiece") {
                     moves.push([row - 2, col]);
                 }
 
                 //can move one bloque diagonally forward if there is an enemy piece to eat
                 try {
-                    if (checkForPiece(`${row - 1}${letters[col - 2]}`, turn) === "pieceEnemy") {
+                    if (checkForPiece(`${row - 1}${letters[col - 2]}`, turno) === "pieceEnemy") {
                         moves.push([row - 1, col - 1]);
                     }
                 } catch (err) {
                     console.log(err);
                 }
                 try {
-                    if (checkForPiece(`${row - 1}${letters[col]}`, turn) === "pieceEnemy") {
+                    if (checkForPiece(`${row - 1}${letters[col]}`, turno) === "pieceEnemy") {
                         moves.push([row - 1, col + 1]);
                     }
                 } catch (err) {
                     console.log(err);
                 }
-            } else if (turn === "B") {
+            } else if (turno === "B") {
                 //can move one bloque forward
-                if (checkForPiece(`${row - 1}${letters[col - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${row - 1}${letters[col - 1]}`, turno) === "noPiece") {
                     moves.push([row - 1, col]);
                 }
 
                 //can move one bloque diagonally forward if there is an enemy piece to eat
                 try {
-                    if (checkForPiece(`${row - 1}${letters[col - 2]}`, turn) === "pieceEnemy") {
+                    if (checkForPiece(`${row - 1}${letters[col - 2]}`, turno) === "pieceEnemy") {
                         moves.push([row - 1, col - 1]);
                     }
                 } catch (err) {
                     console.log(err);
                 }
                 try {
-                    if (checkForPiece(`${row - 1}${letters[col]}`, turn) === "pieceEnemy") {
+                    if (checkForPiece(`${row - 1}${letters[col]}`, turno) === "pieceEnemy") {
                         moves.push([row - 1, col + 1]);
                     }
                 } catch (err) {
@@ -484,9 +440,9 @@
         if (pieceName === "rook") {
             //can move to the top
             for (let i = row + 1; i <= 8; i++) {
-                if (checkForPiece(`${i}${letters[col - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "noPiece") {
                     moves.push([i, col]);
-                } else if (checkForPiece(`${i}${letters[col - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "pieceEnemy") {
                     moves.push([i, col]);
                     break;
                 } else {
@@ -495,9 +451,9 @@
             }
             //can move to the bottom
             for (let i = row - 1; i >= 1; i--) {
-                if (checkForPiece(`${i}${letters[col - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "noPiece") {
                     moves.push([i, col]);
-                } else if (checkForPiece(`${i}${letters[col - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "pieceEnemy") {
                     moves.push([i, col]);
                     break;
                 } else {
@@ -506,9 +462,9 @@
             }
             //can move to the right
             for (let i = col + 1; i <= 8; i++) {
-                if (checkForPiece(`${row}${letters[i - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "noPiece") {
                     moves.push([row, i]);
-                } else if (checkForPiece(`${row}${letters[i - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "pieceEnemy") {
                     moves.push([row, i]);
                     break;
                 } else {
@@ -517,9 +473,9 @@
             }
             //can move to the left
             for (let i = col - 1; i >= 1; i--) {
-                if (checkForPiece(`${row}${letters[i - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "noPiece") {
                     moves.push([row, i]);
-                } else if (checkForPiece(`${row}${letters[i - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "pieceEnemy") {
                     moves.push([row, i]);
                     break;
                 } else {
@@ -533,7 +489,7 @@
         if (pieceName === "knight") {
             //can move two bloques up and one bloque to the right
             try {
-                if (checkForPiece(`${row + 2}${letters[col]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row + 2}${letters[col]}`, turno) !== "pieceTeam") {
                     moves.push([row + 2, col + 1]);
                 }
             } catch (err) {
@@ -541,7 +497,7 @@
             }
             //can move two bloques up and one bloque to the left
             try {
-                if (checkForPiece(`${row + 2}${letters[col - 2]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row + 2}${letters[col - 2]}`, turno) !== "pieceTeam") {
                     moves.push([row + 2, col - 1]);
                 }
             } catch (err) {
@@ -549,7 +505,7 @@
             }
             //can move two bloques down and one bloque to the right
             try {
-                if (checkForPiece(`${row - 2}${letters[col]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row - 2}${letters[col]}`, turno) !== "pieceTeam") {
                     moves.push([row - 2, col + 1]);
                 }
             } catch (err) {
@@ -557,7 +513,7 @@
             }
             //can move two bloques down and one bloque to the left
             try {
-                if (checkForPiece(`${row - 2}${letters[col - 2]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row - 2}${letters[col - 2]}`, turno) !== "pieceTeam") {
                     moves.push([row - 2, col - 1]);
                 }
             } catch (err) {
@@ -565,7 +521,7 @@
             }
             //can move one bloque up and two bloques to the right
             try {
-                if (checkForPiece(`${row + 1}${letters[col + 1]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row + 1}${letters[col + 1]}`, turno) !== "pieceTeam") {
                     moves.push([row + 1, col + 2]);
                 }
             } catch (err) {
@@ -573,7 +529,7 @@
             }
             //can move one bloque up and two bloques to the left
             try {
-                if (checkForPiece(`${row + 1}${letters[col - 3]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row + 1}${letters[col - 3]}`, turno) !== "pieceTeam") {
                     moves.push([row + 1, col - 2]);
                 }
             } catch (err) {
@@ -581,7 +537,7 @@
             }
             //can move one bloque down and two bloques to the right
             try {
-                if (checkForPiece(`${row - 1}${letters[col + 1]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row - 1}${letters[col + 1]}`, turno) !== "pieceTeam") {
                     moves.push([row - 1, col + 2]);
                 }
             } catch (err) {
@@ -589,7 +545,7 @@
             }
             //can move one bloque down and two bloques to the left
             try {
-                if (checkForPiece(`${row - 1}${letters[col - 3]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row - 1}${letters[col - 3]}`, turno) !== "pieceTeam") {
                     moves.push([row - 1, col - 2]);
                 }
             } catch (err) {
@@ -601,9 +557,9 @@
         if (pieceName === "bishop") {
             //can move to the top right
             for (let i = row + 1, j = col + 1; i <= 8 && j <= 8; i++, j++) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
                     moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
                     moves.push([i, j]);
                     break;
                 } else {
@@ -612,9 +568,9 @@
             }
             //can move to the top left
             for (let i = row + 1, j = col - 1; i <= 8 && j >= 1; i++, j--) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
                     moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
                     moves.push([i, j]);
                     break;
                 } else {
@@ -623,9 +579,9 @@
             }
             //can move to the bottom right
             for (let i = row - 1, j = col + 1; i >= 1 && j <= 8; i--, j++) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
                     moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
                     moves.push([i, j]);
                     break;
                 } else {
@@ -634,9 +590,9 @@
             }
             //can move to the bottom left
             for (let i = row - 1, j = col - 1; i >= 1 && j >= 1; i--, j--) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
                     moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
                     moves.push([i, j]);
                     break;
                 } else {
@@ -649,9 +605,9 @@
         if (pieceName === "queen") {
             //can move to the top right
             for (let i = row + 1, j = col + 1; i <= 8 && j <= 8; i++, j++) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
                     moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
                     moves.push([i, j]);
                     break;
                 } else {
@@ -660,9 +616,9 @@
             }
             //can move to the top left
             for (let i = row + 1, j = col - 1; i <= 8 && j >= 1; i++, j--) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
                     moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
                     moves.push([i, j]);
                     break;
                 } else {
@@ -671,9 +627,9 @@
             }
             //can move to the bottom right
             for (let i = row - 1, j = col + 1; i >= 1 && j <= 8; i--, j++) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
                     moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
                     moves.push([i, j]);
                     break;
                 } else {
@@ -682,9 +638,9 @@
             }
             //can move to the bottom left
             for (let i = row - 1, j = col - 1; i >= 1 && j >= 1; i--, j--) {
-                if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "noPiece") {
                     moves.push([i, j]);
-                } else if (checkForPiece(`${i}${letters[j - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${i}${letters[j - 1]}`, turno) === "pieceEnemy") {
                     moves.push([i, j]);
                     break;
                 } else {
@@ -693,9 +649,9 @@
             }
             //can move to the top
             for (let i = row + 1; i <= 8; i++) {
-                if (checkForPiece(`${i}${letters[col - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "noPiece") {
                     moves.push([i, col]);
-                } else if (checkForPiece(`${i}${letters[col - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "pieceEnemy") {
                     moves.push([i, col]);
                     break;
                 } else {
@@ -704,9 +660,9 @@
             }
             //can move to the bottom
             for (let i = row - 1; i >= 1; i--) {
-                if (checkForPiece(`${i}${letters[col - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "noPiece") {
                     moves.push([i, col]);
-                } else if (checkForPiece(`${i}${letters[col - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${i}${letters[col - 1]}`, turno) === "pieceEnemy") {
                     moves.push([i, col]);
                     break;
                 } else {
@@ -715,9 +671,9 @@
             }
             //can move to the right
             for (let i = col + 1; i <= 8; i++) {
-                if (checkForPiece(`${row}${letters[i - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "noPiece") {
                     moves.push([row, i]);
-                } else if (checkForPiece(`${row}${letters[i - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "pieceEnemy") {
                     moves.push([row, i]);
                     break;
                 } else {
@@ -726,9 +682,9 @@
             }
             //can move to the left
             for (let i = col - 1; i >= 1; i--) {
-                if (checkForPiece(`${row}${letters[i - 1]}`, turn) === "noPiece") {
+                if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "noPiece") {
                     moves.push([row, i]);
-                } else if (checkForPiece(`${row}${letters[i - 1]}`, turn) === "pieceEnemy") {
+                } else if (checkForPiece(`${row}${letters[i - 1]}`, turno) === "pieceEnemy") {
                     moves.push([row, i]);
                     break;
                 } else {
@@ -741,49 +697,49 @@
         if (pieceName === "king") {
             //can move one bloque to the top right
             if (row + 1 <= 8 && col + 1 <= 8) {
-                if (checkForPiece(`${row + 1}${letters[col]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row + 1}${letters[col]}`, turno) !== "pieceTeam") {
                     moves.push([row + 1, col + 1]);
                 }
             }
             //can move one bloque to the top left
             if (row + 1 <= 8 && col - 1 >= 1) {
-                if (checkForPiece(`${row + 1}${letters[col - 2]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row + 1}${letters[col - 2]}`, turno) !== "pieceTeam") {
                     moves.push([row + 1, col - 1]);
                 }
             }
             //can move one bloque to the bottom right
             if (row - 1 >= 1 && col + 1 <= 8) {
-                if (checkForPiece(`${row - 1}${letters[col]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row - 1}${letters[col]}`, turno) !== "pieceTeam") {
                     moves.push([row - 1, col + 1]);
                 }
             }
             //can move one bloque to the bottom left
             if (row - 1 >= 1 && col - 1 >= 1) {
-                if (checkForPiece(`${row - 1}${letters[col - 2]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row - 1}${letters[col - 2]}`, turno) !== "pieceTeam") {
                     moves.push([row - 1, col - 1]);
                 }
             }
             //can move one bloque to the top
             if (row + 1 <= 8) {
-                if (checkForPiece(`${row + 1}${letters[col - 1]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row + 1}${letters[col - 1]}`, turno) !== "pieceTeam") {
                     moves.push([row + 1, col]);
                 }
             }
             //can move one bloque to the bottom
             if (row - 1 >= 1) {
-                if (checkForPiece(`${row - 1}${letters[col - 1]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row - 1}${letters[col - 1]}`, turno) !== "pieceTeam") {
                     moves.push([row - 1, col]);
                 }
             }
             //can move one bloque to the right
             if (col + 1 <= 8) {
-                if (checkForPiece(`${row}${letters[col]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row}${letters[col]}`, turno) !== "pieceTeam") {
                     moves.push([row, col + 1]);
                 }
             }
             //can move one bloque to the left
             if (col - 1 >= 1) {
-                if (checkForPiece(`${row}${letters[col - 2]}`, turn) !== "pieceTeam") {
+                if (checkForPiece(`${row}${letters[col - 2]}`, turno) !== "pieceTeam") {
                     moves.push([row, col - 1]);
                 }
             }
@@ -828,22 +784,69 @@
         });
     }
 
+
+    function machineMove() {
+        machineTurn = true;
+        const bloques = document.querySelectorAll('.bloque');
+        const validMoves = [];
+
+        // Recolectar todos los movimientos válidos para la máquina
+        bloques.forEach(bloque => {
+            if (bloque.innerText.length !== 0 && bloque.innerText[0] === turno) {
+                const pieceName = bloque.innerText.slice(1);
+                const position = bloque.id;
+                const moves = hintMoves(pieceName, position);
+                validMoves.push(...moves.map(move => [position, move]));
+            }
+        });
+
+        // Seleccionar un movimiento aleatorio de los movimientos válidos
+        const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+        const currentPosition = randomMove[0];
+        const targetPosition = randomMove[1];
+
+        // Ejecutar el movimiento en la interfaz
+        const currentBlock = document.getElementById(currentPosition);
+        const targetBlock = document.getElementById(targetPosition);
+        const pieceName = currentBlock.innerText.slice(1);
+
+        targetBlock.innerText = pieceName;
+        targetBlock.innerHTML =
+            `${turno + pieceName}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turno + pieceName}.png?raw=true" alt="${turno + pieceName}">`;
+        targetBlock.style.cursor = 'pointer';
+
+        currentBlock.innerText = '';
+        currentBlock.style.cursor = 'default';
+
+        // Verificar si hay ganador después del movimiento
+        const winnerResult = winner();
+        if (winnerResult === 1) {
+            fn_alert("Ganan las Negras", true);
+        } else if (winnerResult === 2) {
+            fn_alert("Ganan las Blancas", true);
+        } else {
+            toggleTurn();
+            machineTurn = false;
+        }
+    }
+
+
     //Moves the piece to the selected bloque
     function movePiece(moves, pieceName, position) {
-        if (gameMode === "machine" && turn === "B") {
+        if (gameMode === "machine" && turno === "B") {
             // Si es el turno de la máquina, seleccionar un movimiento aleatorio de los movimientos válidos
             const randomIndex = Math.floor(Math.random() * moves.length);
             const selectedMove = moves[randomIndex];
             const selectedBlock = document.getElementById(selectedMove);
             selectedBlock.innerText = pieceName;
             selectedBlock.innerHTML =
-                `${turn + selectedBlock.innerText}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turn + selectedBlock.innerText}.png?raw=true" alt="${turn + selectedBlock.innerText}">`;
+                `${turno + selectedBlock.innerText}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turno + selectedBlock.innerText}.png?raw=true" alt="${turno + selectedBlock.innerText}">`;
             selectedBlock.style.cursor = 'pointer';
 
             const previousBlock = document.getElementById(position);
             previousBlock.innerText = "";
             previousBlock.style.cursor = "default";
-            
+
             if (winner() === 1) {
                 fn_alert("Ganan las Negras", true);
             } else if (winner() === 2) {
@@ -859,7 +862,7 @@
                         if (bloque.id === move) {
                             bloque.innerText = pieceName;
                             bloque.innerHTML =
-                                `${turn + bloque.innerText}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turn + bloque.innerText}.png?raw=true" alt="${turn + bloque.innerText}">`;
+                                `${turno + bloque.innerText}<img class='img' src="/assets/imgs/Piezas_ajedrez/${turno + bloque.innerText}.png?raw=true" alt="${turno + bloque.innerText}">`;
                             bloque.style.cursor = 'pointer';
                             const previousBlock = document.getElementById(position);
                             previousBlock.innerText = "";
@@ -883,7 +886,7 @@
 
     //Creates an fn_alert
     function fn_alert(text, end) {
-        const alert = document.querySelector('.container-turn');
+        const alert = document.querySelector('.container-turno');
         alert.style.visibility = 'visible';
         alert.style.opacity = '1';
 
@@ -896,7 +899,7 @@
             imgTurn.alt = "Bking";
         }
 
-        const turnElement = document.getElementById('turn');
+        const turnElement = document.getElementById('turno');
         turnElement.innerText = text;
 
         if (end === true) {
@@ -913,13 +916,13 @@
         }
     }
 
-    //Toggles the turn
+    //Toggles the turno
     function toggleTurn() {
-        if (turn === "W") {
-            turn = "B";
+        if (turno === "W") {
+            turno = "B";
             fn_alert("Turno Negras", false)
         } else {
-            turn = "W";
+            turno = "W";
             fn_alert("Turno Blancas", false)
         }
     }
