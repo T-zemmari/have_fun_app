@@ -21,6 +21,10 @@ Route::get('/juegos/tetris_one', function () {
     return view('juegos.tetris-one');
 })->name('tetris_one');
 
+Route::get('/juegos/sudoku', function () {
+    return view('juegos.sudoku');
+})->name('sudoku_one');
+
 Route::get('/juegos/ajedrez', function () {
     return view('juegos.ajedrez');
 })->name('ajedrez');
