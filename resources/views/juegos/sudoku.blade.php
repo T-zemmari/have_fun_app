@@ -6,7 +6,7 @@
         <div
             class="w-[830px] max-h-[780px] max-w-4xl p-8 bg-white shadow-lg rounded-lg flex flex-col justify-center items-center">
             <h1 class="text-3xl font-bold text-center text-gray-900 mb-4">Sudoku</h1>
-
+            <a href="{{ route('sudoku_one') }}" id="resetBtn" class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300  font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Resetear</a>
             <div id="sudokuBoardContainer" class="mt-8 flex justify-center text-center">
                 <table id="sudokuBoard">
                     <!-- Aquí se generará el tablero de Sudoku dinámicamente -->
@@ -248,7 +248,7 @@
         }
 
         function checkSudoku() {
-            textContent= '';
+            textContent = '';
 
             const size = 9;
             let isRowCorrect = true;
@@ -292,13 +292,13 @@
 
             // Mostrar mensaje de verificación
             if (isRowCorrect && isColumnCorrect) {
-                textContent= '¡Has ganado! Sudoku completado correctamente.';
+                textContent = '¡Has ganado! Sudoku completado correctamente.';
                 Swal.fire({
                     html: `<h4>${textContent}</h4>`,
                     icon: "success"
                 });
             } else {
-                textContent= 'Aún hay errores en el Sudoku. <br>Revisa las filas y columnas marcadas.';
+                textContent = 'Aún hay errores en el Sudoku. <br>Revisa las filas y columnas marcadas.';
                 Swal.fire({
                     html: `<h4>${textContent}</h4>`,
                     icon: "error"
@@ -332,14 +332,14 @@
                         cell.value = board[row][col];
                     }
                 }
-                textContent= 'Sudoku resuelto correctamente.';
+                textContent = 'Sudoku resuelto correctamente.';
                 Swal.fire({
                     html: `<h4>${textContent}</h4>`,
                     icon: "success"
                 });
                 clearCheckMarks();
             } else {
-                textContent= 'No se pudo resolver el Sudoku.';
+                textContent = 'No se pudo resolver el Sudoku.';
                 Swal.fire({
                     html: `<h4>${textContent}</h4>`,
                     icon: "error"
@@ -350,7 +350,7 @@
         function clearSudoku() {
             const cells = document.querySelectorAll('.sudoku-cell:not(.fixed-cell)');
             cells.forEach(cell => cell.value = '');
-            textContent= '';
+            textContent = '';
             clearCheckMarks();
         }
 
