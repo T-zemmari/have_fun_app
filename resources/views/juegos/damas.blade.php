@@ -1,3 +1,78 @@
+<x-guest-layout>
+    @section('title', 'Juego de Damas')
+    @include('layouts.partials.navbar')
+
+    <section class="w-full h-screen flex flex-col justify-center items-center bg-gray-100">
+        <div class="w-full max-w-4xl p-8 bg-white shadow-lg rounded-lg mb-8">
+            <h1 class="text-3xl font-bold text-center text-gray-900 mb-4">Juego de Damas</h1>
+            <table id="checkersBoard" class="mx-auto mb-8"></table>
+            <button id="resetGameBtn" class="btn-action">Resetear Juego</button>
+        </div>
+    </section>
+</x-guest-layout>
+
+<style>
+    .btn-action {
+        padding: 10px 20px;
+        background-color: #6ab04c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 20px;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .btn-action:hover {
+        background-color: #5d9e3f;
+    }
+
+    table {
+        border-collapse: collapse;
+        margin: 0 auto;
+    }
+
+    td {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .black-cell {
+        background-color: #2b6cb0;
+    }
+
+    .white-cell {
+        background-color: #f0f0f0;
+    }
+
+    .checker {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+    .white-checker {
+        background-color: white;
+        border: 2px solid #000;
+    }
+
+    .black-checker {
+        background-color: black;
+    }
+
+    .king {
+        border: 2px solid gold;
+    }
+
+    .selected {
+        outline: 3px solid yellow;
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const checkersBoard = document.getElementById('checkersBoard');
