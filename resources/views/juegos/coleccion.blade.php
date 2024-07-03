@@ -66,7 +66,7 @@
                 class="card_game w-[350px] h-[300px] bg-white border border-gray-200 rounded-lg shadow flex flex-col justify-center items-center">
                 <a href="{{ route('memo_1') }}" class="h-[200px]">
                     <img class="p-8 rounded-t-lg w-[100%] h-[100%] object-cover"
-                        src="{{ asset('assets/imgs/img_sudoku/memo_1.png') }}" alt="memo_1" />
+                        src="{{ asset('assets/imgs/img_memo_1/memo_1.png') }}" alt="memo_1" />
                 </a>
                 <div class="w-full px-5 pb-5 h-[100px]">
                     <a href="{{ route('memo_1') }}">
