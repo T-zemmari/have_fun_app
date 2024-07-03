@@ -25,6 +25,10 @@ Route::get('/juegos/sudoku', function () {
     return view('juegos.sudoku');
 })->name('sudoku_one');
 
+Route::get('/juegos/memo_1', function () {
+    return view('juegos.memo_1');
+})->name('memo_1');
+
 Route::get('/juegos/ajedrez', function () {
     return view('juegos.ajedrez');
 })->name('ajedrez');
