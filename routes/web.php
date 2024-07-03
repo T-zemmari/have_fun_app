@@ -33,13 +33,23 @@ Route::get('/juegos/ajedrez', function () {
     return view('juegos.ajedrez');
 })->name('ajedrez');
 
+Route::get('/juegos/damas', function () {
+    return view('juegos.damas');
+})->name('damas');
+
+
+
+
 Route::get('/juegos', function () {
     return view('juegos.coleccion');
 })->name('coleccion');
 
+
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/mi-perfil', [ProfileController::class, 'edit'])->name('profile.edit');
