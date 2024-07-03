@@ -1,102 +1,3 @@
-<x-guest-layout>
-    @section('title', 'Juegos')
-    @include('layouts.partials.navbar')
-
-    <section class="w-full h-screen flex flex-col justify-center items-center bg-gray-100">
-        <div class="w-full max-w-4xl p-8 bg-white shadow-lg rounded-lg mb-8">
-            <h1 class="text-3xl font-bold text-center text-gray-900 mb-4">Juego de Damas</h1>
-            <table id="checkersBoard" class="mx-auto mb-8"></table>
-            <button id="resetGameBtn" class="btn-action">Resetear Juego</button>
-        </div>
-    </section>
-</x-guest-layout>
-
-<style>
-    .btn-action {
-        padding: 10px 20px;
-        background-color: #6ab04c;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        margin-top: 20px;
-        display: block;
-        margin: 0 auto;
-    }
-
-    .btn-action:hover {
-        background-color: #5d9e3f;
-    }
-
-    table {
-        border-collapse: collapse;
-        margin: 0 auto;
-    }
-
-    td {
-        width: 50px;
-        height: 50px;
-        text-align: center;
-        vertical-align: middle;
-    }
-
-    .black-cell {
-        background-color: #2b6cb0;
-    }
-
-    .white-cell {
-        background-color: #f0f0f0;
-    }
-
-    .checker {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-    }
-
-    .white-checker {
-        background-color: white;
-        border: 2px solid #000;
-    }
-
-    .black-checker {
-        background-color: black;
-    }
-
-    .king {
-        border: 2px solid gold;
-    }
-
-    .selected {
-        outline: 3px solid yellow;
-    }
-
-    #memoryGame {
-        display: grid;
-        grid-template-columns: repeat(4, 100px);
-        gap: 10px;
-    }
-
-    .memory-card {
-        width: 100px;
-        height: 100px;
-        background-color: #f0f0f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        color: transparent;
-        cursor: pointer;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .memory-card.flipped {
-        background-color: #6ab04c;
-        color: white;
-    }
-</style>
-
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const checkersBoard = document.getElementById('checkersBoard');
@@ -106,6 +7,7 @@
         const computerColor = 'black';
 
         let selectedChecker = null;
+        let playerMoved = false; // Indicador para asegurar que el ordenador no mueva hasta que el jugador haya movido
 
         function generateBoard() {
             checkersBoard.innerHTML = '';
@@ -146,15 +48,25 @@
                     moveChecker(selectedChecker, cell);
                     selectedChecker.classList.remove('selected');
                     selectedChecker = null;
+                    playerMoved = true; // El jugador ha movido
                     if (checkWin(playerColor)) {
-                        alert('¡Felicidades! Has ganado el juego.');
+                        Swal.fire({
+                            html: `<h4>¡Felicidades! Has ganado el juego de damas.</h4>`,
+                            icon: "success"
+                        });
                         generateBoard();
                     } else {
                         setTimeout(() => {
-                            computerMove();
-                            if (checkWin(computerColor)) {
-                                alert('¡Lo siento! Has perdido el juego.');
-                                generateBoard();
+                            if (playerMoved) {
+                                computerMove();
+                                if (checkWin(computerColor)) {
+                                    Swal.fire({
+                                        html: `<h4>¡Lo siento! Has perdido el juego de damas.</h4>`,
+                                        icon: "error"
+                                    });
+                                    generateBoard();
+                                }
+                                playerMoved = false; // Resetear el indicador después del movimiento del ordenador
                             }
                         }, 500);
                     }
@@ -172,25 +84,31 @@
             const direction = checker.dataset.color === playerColor ? -1 : 1;
             const distance = Math.abs(startRow - endRow);
 
+            const targetCell = document.querySelector(`td[data-row="${endRow}"][data-col="${endCol}"]`);
+            if (targetCell && targetCell.firstChild && targetCell.firstChild.dataset.color === checker.dataset.color) {
+                return false; // No se puede mover a una celda con una pieza del mismo color
+            }
+
             if (distance === 1 && Math.abs(startCol - endCol) === 1) {
                 return (endRow - startRow) === direction || checker.classList.contains('king');
             } else if (distance === 2 && Math.abs(startCol - endCol) === 2) {
                 const middleRow = (startRow + endRow) / 2;
                 const middleCol = (startCol + endCol) / 2;
                 const middleCell = document.querySelector(`td[data-row="${middleRow}"][data-col="${middleCol}"]`);
-                if (middleCell.firstChild && middleCell.firstChild.dataset.color !== checker.dataset.color) {
-                    middleCell.removeChild(middleCell.firstChild);
-                    return true;
+                if (middleCell && middleCell.firstChild && middleCell.firstChild.dataset.color !== checker.dataset.color) {
+                    return true; // Movimiento de captura válido
                 }
             }
             return false;
         }
 
         function moveChecker(checker, destination) {
-            destination.appendChild(checker);
-            const row = parseInt(destination.dataset.row);
-            if ((row === 0 && checker.dataset.color === playerColor) || (row === boardSize - 1 && checker.dataset.color === computerColor)) {
-                checker.classList.add('king');
+            if (destination.childElementCount === 0) {
+                destination.appendChild(checker);
+                const row = parseInt(destination.dataset.row);
+                if ((row === 0 && checker.dataset.color === playerColor) || (row === boardSize - 1 && checker.dataset.color === computerColor)) {
+                    checker.classList.add('king');
+                }
             }
         }
 
@@ -211,7 +129,17 @@
                 const randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
                 const startCell = document.querySelector(`td[data-row="${randomMove.startRow}"][data-col="${randomMove.startCol}"]`);
                 const targetCell = document.querySelector(`td[data-row="${randomMove.move.row}"][data-col="${randomMove.move.col}"]`);
+                const capturedPiece = capturePieceIfNeeded(randomMove.startRow, randomMove.startCol, randomMove.move.row, randomMove.move.col);
                 moveChecker(startCell.firstChild, targetCell);
+            }
+        }
+
+        function capturePieceIfNeeded(startRow, startCol, endRow, endCol) {
+            const middleRow = (startRow + endRow) / 2;
+            const middleCol = (startCol + endCol) / 2;
+            const middleCell = document.querySelector(`td[data-row="${middleRow}"][data-col="${middleCol}"]`);
+            if (Math.abs(startRow - endRow) === 2 && middleCell && middleCell.firstChild) {
+                middleCell.removeChild(middleCell.firstChild);
             }
         }
 
@@ -258,56 +186,12 @@
             return false;
         }
 
-        resetGameBtn.addEventListener('click', generateBoard);
+        resetGameBtn.addEventListener('click', () => {
+            selectedChecker = null;
+            playerMoved = false; // Resetear el indicador al reiniciar el juego
+            generateBoard();
+        });
 
         generateBoard();
-        
-        // Juego de memoria
-        const memoryGame = document.getElementById('memoryGame');
-        const resetMemoryGameBtn = document.getElementById('resetMemoryGameBtn');
-        const cardValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-        let flippedCards = [];
-
-        function generateMemoryGame() {
-            const doubledValues = [...cardValues, ...cardValues];
-            const shuffledValues = doubledValues.sort(() => 0.5 - Math.random());
-            memoryGame.innerHTML = '';
-            shuffledValues.forEach(value => {
-                const card = document.createElement('div');
-                card.classList.add('memory-card');
-                card.dataset.value = value;
-                card.addEventListener('click', () => cardClicked(card));
-                memoryGame.appendChild(card);
-            });
-        }
-
-        function cardClicked(card) {
-            if (flippedCards.length < 2 && !card.classList.contains('flipped')) {
-                card.classList.add('flipped');
-                card.textContent = card.dataset.value;
-                flippedCards.push(card);
-                if (flippedCards.length === 2) {
-                    setTimeout(checkMatch, 1000);
-                }
-            }
-        }
-
-        function checkMatch() {
-            const [card1, card2] = flippedCards;
-            if (card1.dataset.value === card2.dataset.value) {
-                card1.style.visibility = 'hidden';
-                card2.style.visibility = 'hidden';
-            } else {
-                card1.classList.remove('flipped');
-                card2.classList.remove('flipped');
-                card1.textContent = '';
-                card2.textContent = '';
-            }
-            flippedCards = [];
-        }
-
-        resetMemoryGameBtn.addEventListener('click', generateMemoryGame);
-
-        generateMemoryGame();
     });
 </script>
