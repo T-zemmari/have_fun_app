@@ -123,6 +123,10 @@
                     const captured = capturePieceIfNeeded(startRow, startCol, row, col);
                     moveChecker(selectedChecker, cell);
                     if (captured) {
+                        if (canCaptureAgain(selectedChecker, row, col)) {
+                            selectedChecker.classList.add('selected');
+                            return; // Permitir captura múltiple
+                        }
                         checkWin(playerColor);
                     }
                     selectedChecker.classList.remove('selected');
@@ -149,23 +153,43 @@
         function isValidMove(startRow, startCol, endRow, endCol, checker) {
             const direction = checker.dataset.color === playerColor ? -1 : 1;
             const distance = Math.abs(startRow - endRow);
-
             const targetCell = document.querySelector(`td[data-row="${endRow}"][data-col="${endCol}"]`);
+
             if (targetCell && targetCell.firstChild) {
                 return false;
             }
 
-            if (distance === 1 && Math.abs(startCol - endCol) === 1) {
-                return (endRow - startRow) === direction || checker.classList.contains('king');
-            } else if (distance === 2 && Math.abs(startCol - endCol) === 2) {
-                const middleRow = (startRow + endRow) / 2;
-                const middleCol = (startCol + endCol) / 2;
-                const middleCell = document.querySelector(`td[data-row="${middleRow}"][data-col="${middleCol}"]`);
-                if (middleCell && middleCell.firstChild && middleCell.firstChild.dataset.color !== checker.dataset.color) {
-                    return true;
+            if (checker.classList.contains('king')) {
+                if (distance === Math.abs(startCol - endCol)) {
+                    return isPathClear(startRow, startCol, endRow, endCol);
+                }
+            } else {
+                if (distance === 1 && Math.abs(startCol - endCol) === 1) {
+                    return (endRow - startRow) === direction;
+                } else if (distance === 2 && Math.abs(startCol - endCol) === 2) {
+                    const middleRow = (startRow + endRow) / 2;
+                    const middleCol = (startCol + endCol) / 2;
+                    const middleCell = document.querySelector(`td[data-row="${middleRow}"][data-col="${middleCol}"]`);
+                    if (middleCell && middleCell.firstChild && middleCell.firstChild.dataset.color !== checker.dataset.color) {
+                        return true;
+                    }
                 }
             }
             return false;
+        }
+
+        function isPathClear(startRow, startCol, endRow, endCol) {
+            const rowStep = startRow < endRow ? 1 : -1;
+            const colStep = startCol < endCol ? 1 : -1;
+            let pathClear = true;
+            for (let row = startRow + rowStep, col = startCol + colStep; row !== endRow && col !== endCol; row += rowStep, col += colStep) {
+                const cell = document.querySelector(`td[data-row="${row}"][data-col="${col}"]`);
+                if (cell.firstChild) {
+                    pathClear = false;
+                    break;
+                }
+            }
+            return pathClear;
         }
 
         function moveChecker(checker, destination) {
@@ -180,11 +204,33 @@
             const middleRow = (startRow + endRow) / 2;
             const middleCol = (startCol + endCol) / 2;
             const middleCell = document.querySelector(`td[data-row="${middleRow}"][data-col="${middleCol}"]`);
-            if (Math.abs(startRow - endRow) === 2 && middleCell && middleCell.firstChild) {
+            if (Math.abs(startRow - endRow) > 1 && middleCell && middleCell.firstChild) {
                 middleCell.removeChild(middleCell.firstChild);
                 return true;
             }
             return false;
+        }
+
+        function canCaptureAgain(checker, row, col) {
+            const directions = [
+                { rowDir: -2, colDir: -2 },
+                { rowDir: -2, colDir: 2 },
+                { rowDir: 2, colDir: -2 },
+                { rowDir: 2, colDir: 2 }
+            ];
+
+            return directions.some(({ rowDir, colDir }) => {
+                const newRow = row + rowDir;
+                const newCol = col + colDir;
+                if (newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize) {
+                    const middleRow = row + rowDir / 2;
+                    const middleCol = col + colDir / 2;
+                    const middleCell = document.querySelector(`td[data-row="${middleRow}"][data-col="${middleCol}"]`);
+                    const targetCell = document.querySelector(`td[data-row="${newRow}"][data-col="${newCol}"]`);
+                    return middleCell && middleCell.firstChild && middleCell.firstChild.dataset.color !== checker.dataset.color && targetCell && !targetCell.firstChild;
+                }
+                return false;
+            });
         }
 
         function computerMove() {
@@ -204,36 +250,60 @@
                 const randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
                 const startCell = document.querySelector(`td[data-row="${randomMove.startRow}"][data-col="${randomMove.startCol}"]`);
                 const targetCell = document.querySelector(`td[data-row="${randomMove.move.row}"][data-col="${randomMove.move.col}"]`);
-                capturePieceIfNeeded(randomMove.startRow, randomMove.startCol, randomMove.move.row, randomMove.move.col);
+                const capturedPiece = capturePieceIfNeeded(randomMove.startRow, randomMove.startCol, randomMove.move.row, randomMove.move.col);
                 moveChecker(startCell.firstChild, targetCell);
+
+                // Movimiento de captura adicional si es posible
+                const newMoves = getPossibleMoves(randomMove.move.row, randomMove.move.col, targetCell.firstChild);
+                if (capturedPiece && newMoves.length > 0) {
+                    const nextMove = newMoves[Math.floor(Math.random() * newMoves.length)];
+                    const nextTargetCell = document.querySelector(`td[data-row="${nextMove.row}"][data-col="${nextMove.col}"]`);
+                    capturePieceIfNeeded(randomMove.move.row, randomMove.move.col, nextMove.row, nextMove.col);
+                    moveChecker(targetCell.firstChild, nextTargetCell);
+                }
             }
         }
 
         function getPossibleMoves(row, col, checker) {
-            const direction = checker.dataset.color === playerColor ? -1 : 1;
+            const directions = checker.classList.contains('king')
+                ? [
+                    { rowDir: -1, colDir: -1 },
+                    { rowDir: -1, colDir: 1 },
+                    { rowDir: 1, colDir: -1 },
+                    { rowDir: 1, colDir: 1 }
+                ]
+                : checker.dataset.color === playerColor
+                    ? [
+                        { rowDir: -1, colDir: -1 },
+                        { rowDir: -1, colDir: 1 }
+                    ]
+                    : [
+                        { rowDir: 1, colDir: -1 },
+                        { rowDir: 1, colDir: 1 }
+                    ];
+
             const possibleMoves = [];
+            for (const { rowDir, colDir } of directions) {
+                let newRow = row + rowDir;
+                let newCol = col + colDir;
 
-            for (let dCol of [-1, 1]) {
-                const newRow = row + direction;
-                const newCol = col + dCol;
-                const targetCell = document.querySelector(`td[data-row="${newRow}"][data-col="${newCol}"]`);
-                if (targetCell && targetCell.childElementCount === 0) {
-                    possibleMoves.push({ row: newRow, col: newCol });
+                if (newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize) {
+                    const targetCell = document.querySelector(`td[data-row="${newRow}"][data-col="${newCol}"]`);
+                    if (targetCell && !targetCell.firstChild) {
+                        possibleMoves.push({ row: newRow, col: newCol });
+                        if (!checker.classList.contains('king')) {
+                            break;
+                        }
+                    } else if (targetCell && targetCell.firstChild && targetCell.firstChild.dataset.color !== checker.dataset.color) {
+                        const captureRow = newRow + rowDir;
+                        const captureCol = newCol + colDir;
+                        const captureCell = document.querySelector(`td[data-row="${captureRow}"][data-col="${captureCol}"]`);
+                        if (captureCell && !captureCell.firstChild) {
+                            possibleMoves.push({ row: captureRow, col: captureCol });
+                        }
+                    }
                 }
             }
-
-            for (let dCol of [-2, 2]) {
-                const newRow = row + direction * 2;
-                const newCol = col + dCol;
-                const middleRow = row + direction;
-                const middleCol = col + dCol / 2;
-                const targetCell = document.querySelector(`td[data-row="${newRow}"][data-col="${newCol}"]`);
-                const middleCell = document.querySelector(`td[data-row="${middleRow}"][data-col="${middleCol}"]`);
-                if (targetCell && targetCell.childElementCount === 0 && middleCell && middleCell.firstChild && middleCell.firstChild.dataset.color !== checker.dataset.color) {
-                    possibleMoves.push({ row: newRow, col: newCol });
-                }
-            }
-
             return possibleMoves;
         }
 
