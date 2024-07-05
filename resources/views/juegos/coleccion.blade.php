@@ -85,7 +85,7 @@
                 class="card_game w-[350px] h-[300px] bg-white border border-gray-200 rounded-lg shadow flex flex-col justify-center items-center">
                 <a href="{{ route('damas') }}" class="h-[200px]">
                     <img class="p-8 rounded-t-lg w-[100%] h-[100%] object-cover"
-                        src="{{ asset('assets/imgs/img_damas/damas.png') }}" alt="damas" />
+                        src="{{ asset('assets/imgs/img_damas/damas_1.png') }}" alt="damas" />
                 </a>
                 <div class="w-full px-5 pb-5 h-[100px]">
                     <a href="{{ route('damas') }}">
