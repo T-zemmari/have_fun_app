@@ -58,7 +58,7 @@
 
             let platforme=this.physics.add.staticGroup();
 
-            platforme.create(400,568,'barra').setScale(2);
+            platforme.create(400,568,'barra').setScale(2).refreshBody();
 
             platforme.create(600,400,'barra');
             platforme.create(50,250,'barra');
