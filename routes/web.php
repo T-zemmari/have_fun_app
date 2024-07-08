@@ -37,6 +37,10 @@ Route::get('/juegos/damas', function () {
     return view('juegos.damas');
 })->name('damas');
 
+Route::get('/juegos/demo_physer', function () {
+    return view('juegos.demo_physer');
+})->name('demo_physer');
+
 
 
 
