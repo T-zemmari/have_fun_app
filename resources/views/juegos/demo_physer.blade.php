@@ -24,6 +24,14 @@
             type: Phaser.AUTO,
             width: 800,
             height: 600,
+            physics:{
+                default:'arcade',
+                arcade:{
+                    gravity:{y:300},
+                    debug:false,
+                }
+
+            },
             parent: 'phaser-game',
             scene: {
                 preload: preload,
@@ -46,7 +54,15 @@
 
         function create() {
             this.add.image(400, 300, 'fondo');
-            this.add.image(400, 300, 'estrella');
+            //this.add.image(400, 300, 'estrella');
+
+            let platforme=this.physics.add.staticGroup();
+
+            platforme.create(400,568,'barra').setScale(2);
+
+            platforme.create(600,400,'barra');
+            platforme.create(50,250,'barra');
+            platforme.create(750,220,'barra');
         }
 
         function update() {
