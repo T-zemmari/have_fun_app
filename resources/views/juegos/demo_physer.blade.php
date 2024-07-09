@@ -24,11 +24,13 @@
             type: Phaser.AUTO,
             width: 800,
             height: 600,
-            physics:{
-                default:'arcade',
-                arcade:{
-                    gravity:{y:300},
-                    debug:false,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: {
+                        y: 300
+                    },
+                    debug: false,
                 }
 
             },
@@ -48,7 +50,10 @@
             this.load.image('barra', barra);
             this.load.image('bombita', bombita);
 
-            this.load.spritesheet('munieco', munieco,{frameWidth:32,frameHeight:48});
+            this.load.spritesheet('munieco', munieco, {
+                frameWidth: 32,
+                frameHeight: 48
+            });
 
         }
 
@@ -56,16 +61,50 @@
             this.add.image(400, 300, 'fondo');
             //this.add.image(400, 300, 'estrella');
 
-            let platforme=this.physics.add.staticGroup();
+            let platforms = this.physics.add.staticGroup();
 
-            platforme.create(400,568,'barra').setScale(2).refreshBody();
+            platforms.create(400, 568, 'barra').setScale(2).refreshBody();
 
-            platforme.create(600,400,'barra');
-            platforme.create(50,250,'barra');
-            platforme.create(750,220,'barra');
+            platforms.create(600, 400, 'barra');
+            platforms.create(50, 250, 'barra');
+            platforms.create(750, 220, 'barra');
+
+            let player = this.physics.add.sprite(100, 450, 'munieco');
+            player.setCollideWorldBounds(true);
+            player.setBounce(0.2);
+
+            this.anims.create({
+                key: 'left',
+                frame: this.anims.generateFrameNumbers('munieco', {
+                    start: 0,
+                    end: 3
+                }),
+                frameRate: 10,
+                repeate: -1,
+            });
+            this.anims.create({
+                key: 'turn',
+                frame: [{
+                    key: 'munieco',
+                    frame: 4
+                }],
+                frameRate: 20,
+            });
+            this.anims.create({
+                key: 'right',
+                frame: this.anims.generateFrameNumbers('munieco', {
+                    start: 5,
+                    end: 8
+                }),
+                frameRate: 10,
+                repeate: -1,
+            });
+
+            player.body.setGravityY(300);
+
+            this.physics.add.collider(player,platforms)
         }
 
-        function update() {
-        }
+        function update() {}
     });
 </script>
