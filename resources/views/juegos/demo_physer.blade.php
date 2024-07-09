@@ -69,13 +69,13 @@
             platforms.create(50, 250, 'barra');
             platforms.create(750, 220, 'barra');
 
-            let player = this.physics.add.sprite(100, 450, 'munieco');
+            player = this.physics.add.sprite(100, 450, 'munieco');
             player.setCollideWorldBounds(true);
             player.setBounce(0.2);
 
             this.anims.create({
                 key: 'left',
-                frame: this.anims.generateFrameNumbers('munieco', {
+                frames: this.anims.generateFrameNumbers('munieco', {
                     start: 0,
                     end: 3
                 }),
@@ -84,7 +84,7 @@
             });
             this.anims.create({
                 key: 'turn',
-                frame: [{
+                frames: [{
                     key: 'munieco',
                     frame: 4
                 }],
@@ -92,7 +92,7 @@
             });
             this.anims.create({
                 key: 'right',
-                frame: this.anims.generateFrameNumbers('munieco', {
+                frames: this.anims.generateFrameNumbers('munieco', {
                     start: 5,
                     end: 8
                 }),
@@ -100,11 +100,27 @@
                 repeate: -1,
             });
 
-            player.body.setGravityY(300);
+            //player.body.setGravityY(300);
 
-            this.physics.add.collider(player,platforms)
+            this.physics.add.collider(player, platforms);
+            cursors = this.input.keyboard.createCursorKeys();
         }
 
-        function update() {}
+        function update() {
+            if (cursors.left.isDown) {
+                player.setVelocityX(-150);
+                player.anims.play('left', true);
+            } else if (cursors.right.isDown) {
+                player.setVelocityX(150);
+                player.anims.play('right', true);
+            } else {
+                player.setVelocityX(0);
+                player.anims.play('turn', true);
+            }
+
+            if(cursors.up.isDown && player.body.touching.down){
+                player.setVelocityY(-330);
+            }
+        }
     });
 </script>
