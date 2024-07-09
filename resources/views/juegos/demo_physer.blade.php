@@ -104,6 +104,20 @@
 
             this.physics.add.collider(player, platforms);
             cursors = this.input.keyboard.createCursorKeys();
+
+            stars = this.physics.add.group({
+                key: 'estrella',
+                repeate: 11,
+                setXY: {
+                    x: 12,
+                    y: 0,
+                    stepX: 70
+                }
+            })
+
+            stars.children.iterate(function(child) {
+                child.setBounce(Phaser.Math.FloatBetween(0.4, 0.8));
+            });
         }
 
         function update() {
@@ -118,7 +132,7 @@
                 player.anims.play('turn', true);
             }
 
-            if(cursors.up.isDown && player.body.touching.down){
+            if (cursors.up.isDown && player.body.touching.down) {
                 player.setVelocityY(-330);
             }
         }
