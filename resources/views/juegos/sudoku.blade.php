@@ -2,7 +2,10 @@
     @section('title', 'Sudoku')
     @include('layouts.partials.navbar')
 
-    <section class="w-full h-screen flex justify-center items-center bg-gray-100">
+    <section class="w-full h-screen flex flex-col justify-center items-center bg-gray-100">
+        <div class="w-[100%] max-w-4xl flex justify-start items-center mt-10">
+            @include('layouts.partials.menu_nav')
+        </div>
         <div
             class="w-[830px] max-h-[780px] max-w-4xl p-8 bg-white shadow-lg rounded-lg flex flex-col justify-center items-center">
             <h1 class="text-3xl font-bold text-center text-gray-900 mb-4">Sudoku</h1>

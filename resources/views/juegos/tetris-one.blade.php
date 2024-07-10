@@ -2,8 +2,11 @@
     @section('title', 'HAVE FUN - Juegos tetris One')
     @include('layouts.partials.navbar')
 
-    <section class="w-full h-[91.1vh] flex justify-center md:p-12">
-        <div class="w-full max-w-[60%] h-[100%] flex flex-row justify-center items-center mt-[1em] gap-2">
+    <section class="w-full min-h-[91.1vh] flex flex-col justify-center items-center md:p-12">
+        <div class="w-[100%] max-w-4xl flex justify-start items-center mt-10">
+            @include('layouts.partials.menu_nav')
+        </div>
+        <div class="w-full max-w-[60%] h-[100%] flex flex-row justify-center items-center  gap-2">
             <div class="w-[60%] h-[100%] flex flex-col justify-center items-center border border-[#dbdbdb] p-1">
                 <div class="w-full flex flex-row justify-center items-center gap-4">
                     <canvas id="canva_tetris_one" width="300" height="600"></canvas>
