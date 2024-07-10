@@ -144,15 +144,22 @@
     @section('title', 'HAVE FUN - Juegos Ajedrez')
     @include('layouts.partials.navbar')
 
-    <section class="w-full h-[91.1vh] flex-col flex justify-center items-center">
+    <section class="w-full  flex-col flex justify-center items-center">
+
+       
         <section class="container-turno">
             <img id="imgTurn" src="" alt="">
             <h2 id="turno"></h2>
         </section>
+       
 
         <h1>Ajedrez</h1>
+
+        <div class="w-[100%] max-w-4xl flex justify-start items-center mt-12">
+            @include('layouts.partials.menu_nav')
+        </div>
         <div class="w-[100%] flex justify-center items-center flex-col">
-            <table class="mt-12">
+            <table class="mt-1">
                 <tbody>
                     @php
                         $filas = ['8', '7', '6', '5', '4', '3', '2', '1'];
