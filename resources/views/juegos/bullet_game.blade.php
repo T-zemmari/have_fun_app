@@ -17,12 +17,12 @@
 <script src="{{ asset('assets/js/phaser.min.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const fondo = "{{ asset('assets/imgs/img_bullet_game/background.png') }}";
+        const fondo = "{{ asset('assets/imgs/img_bullet_game/background_3.png') }}";
         const estrella = "{{ asset('assets/imgs/img_bullet_game/star.png') }}";
         const plataforma = "{{ asset('assets/imgs/img_bullet_game/platform.png') }}";
         const jugador = "{{ asset('assets/imgs/img_bullet_game/player.png') }}";
         const enemigo = "{{ asset('assets/imgs/img_bullet_game/enemy_1.png') }}";
-        const bala = "{{ asset('assets/imgs/img_bullet_game/bullet.png') }}";
+        const bala = "{{ asset('assets/imgs/img_bullet_game/bullet_3.png') }}";
 
         const config = {
             type: Phaser.AUTO,
@@ -31,7 +31,9 @@
             physics: {
                 default: 'arcade',
                 arcade: {
-                    gravity: { y: 300 },
+                    gravity: {
+                        y: 300
+                    },
                     debug: false
                 }
             },
@@ -77,18 +79,27 @@
 
             this.anims.create({
                 key: 'left',
-                frames: this.anims.generateFrameNumbers('jugador', { start: 0, end: 3 }),
+                frames: this.anims.generateFrameNumbers('jugador', {
+                    start: 0,
+                    end: 3
+                }),
                 frameRate: 10,
                 repeat: -1
             });
             this.anims.create({
                 key: 'turn',
-                frames: [{ key: 'jugador', frame: 4 }],
+                frames: [{
+                    key: 'jugador',
+                    frame: 4
+                }],
                 frameRate: 20
             });
             this.anims.create({
                 key: 'right',
-                frames: this.anims.generateFrameNumbers('jugador', { start: 5, end: 8 }),
+                frames: this.anims.generateFrameNumbers('jugador', {
+                    start: 5,
+                    end: 8
+                }),
                 frameRate: 10,
                 repeat: -1
             });
@@ -100,7 +111,11 @@
             stars = this.physics.add.group({
                 key: 'estrella',
                 repeat: 11,
-                setXY: { x: 12, y: 0, stepX: 70 }
+                setXY: {
+                    x: 12,
+                    y: 0,
+                    stepX: 70
+                }
             });
             stars.children.iterate(child => {
                 child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
@@ -149,21 +164,35 @@
             if (cursors.up.isDown && player.body.touching.down) {
                 player.setVelocityY(-330);
             }
+
+            bullets.children.each(bullet => {
+                if (bullet.active && bullet.y < 0) {
+                    bullet.disableBody(true, true);
+                }
+            });
         }
 
         function shoot() {
-            if (bullets.getTotalFree() > 0) {
-                const bullet = bullets.get(player.x, player.y);
-                if (bullet) {
-                    bullet.setActive(true);
-                    bullet.setVisible(true);
-                    bullet.body.velocity.y = -400;
-                }
+            const bullet = bullets.get(player.x, player.y - 25); // Ajustamos la posición inicial para que salga desde la cabeza
+
+            if (bullet) {
+                bullet.enableBody(true, bullet.x, bullet.y, true, true);
+                bullet.setActive(true);
+                bullet.setVisible(true);
+                bullet.body.velocity.y = -400; // La bala siempre se moverá hacia arriba
+
+                this.time.addEvent({
+                    delay: 2000,
+                    callback: () => {
+                        bullet.disableBody(true, true);
+                    },
+                    callbackScope: this
+                });
             }
         }
 
         function createEnemies(scene) {
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 2; i++) {
                 const enemy = enemies.create(Phaser.Math.Between(0, 800), Phaser.Math.Between(0, 300), 'enemigo');
                 enemy.setBounce(1);
                 enemy.setCollideWorldBounds(true);
@@ -175,6 +204,14 @@
             star.disableBody(true, true);
             score += 10;
             scoreText.setText('Score: ' + score);
+
+            if (stars.countActive(true) === 0) {
+                stars.children.iterate(child => {
+                    child.enableBody(true, child.x, 0, true, true);
+                });
+
+                createEnemies(this);
+            }
         }
 
         function hitEnemy(player, enemy) {
