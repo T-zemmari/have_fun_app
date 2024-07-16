@@ -41,7 +41,9 @@ Route::get('/juegos/demo_physer', function () {
     return view('juegos.demo_physer');
 })->name('demo_physer');
 
-
+Route::get('/juegos/bullet_game', function () {
+    return view('juegos.bullet_game');
+})->name('bullet_game');
 
 
 Route::get('/juegos', function () {

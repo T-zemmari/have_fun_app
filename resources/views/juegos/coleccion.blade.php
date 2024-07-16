@@ -2,7 +2,7 @@
     @section('title', 'HAVEFUN - Coleccion')
     @include('layouts.partials.navbar')
 
-    <section class="w-full h-screen flex justify-center">
+    <section class="w-full min-h-screen flex justify-center">
 
         <div class="w-full md:p-10 max-w-7xl flex flex-row flex-wrap justify-start items-start mt-[10em] gap-4">
             <div
@@ -115,6 +115,25 @@
                     <div class="flex items-center justify-between">
                         <span class="text-3xl font-bold text-gray-900 dark:text-white">Gratis</span>
                         <a href="{{ route('demo_physer') }}"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Jugar</a>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="card_game w-[350px] h-[300px] bg-white border border-gray-200 rounded-lg shadow flex flex-col justify-center items-center">
+                <a href="{{ route('bullet_game') }}" class="h-[200px]">
+                    <img class="p-8 rounded-t-lg w-[100%] h-[100%] object-cover"
+                        src="{{ asset('assets/imgs/img_bullet_game/img_1.png') }}" alt="img4" />
+                </a>
+                <div class="w-full px-5 pb-5 h-[100px]">
+                    <a href="{{ route('bullet_game') }}">
+                        <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Physer demo</h5>
+                    </a>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-bold text-gray-900 dark:text-white">Gratis</span>
+                        <a href="{{ route('bullet_game') }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Jugar</a>
                     </div>
                 </div>
