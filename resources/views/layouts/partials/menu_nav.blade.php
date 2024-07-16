@@ -1,4 +1,3 @@
-<!-- resources/views/layouts/partials/breadcrumbs.blade.php -->
 <nav class="p-3 rounded mb-4 bg-gray-100">
     <ol class="list-reset flex text-gray-700">
         <li><a href="{{ route('landing') }}" class="text-blue-600 hover:underline">Inicio</a></li>
