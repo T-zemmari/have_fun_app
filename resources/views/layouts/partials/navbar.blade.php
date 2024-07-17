@@ -28,6 +28,15 @@
                         Contacto
                     </a>
                 </li>
+                @if (Auth::check() && Auth::user()->user_type == 'super_user')
+                    <li>
+                        <a href="{{ route('dashboard') }}"
+                            aria-current="{{ request()->route()->named('contacto') ? 'page' : '' }}"
+                            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent {{ request()->route()->named('dashboard') ? 'md:text-white' : 'md:text-[#b9c4d7]' }} md:hover:text-white md:p-0">
+                            Dashboard
+                        </a>
+                    </li>
+                @endif
                 <li>
                     @if (!Auth::check())
                         <a href="{{ route('login') }}"
