@@ -1,9 +1,9 @@
 <x-admin-base>
     <div class="w-full min-h-[100%] mt-[5rem]">
 
-        <div class="overflow-x-auto shadow-md sm:rounded-lg">
+        <div class="overflow-x-auto shadow-md sm:rounded-lg p-[30px]">
             <div
-                class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white ">
+                class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white">
                 <label for="table-search" class="sr-only">Buscar</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -18,7 +18,7 @@
                         placeholder="Buscar un usuario">
                 </div>
             </div>
-            @if (!isset($users) && count($users) == 0)
+            @if (!isset($users) || count($users) == 0)
                 <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                     role="alert">
                     <span class="font-medium">La lista de usuario esta vacia</span>.
@@ -71,7 +71,7 @@
                                         enctype="multipart/form-data">
                                         @csrf
                                         <label for="avatar" class="cursor-pointer text-blue-600 hover:underline">
-                                            @if ($user->userProfile && $user->userProfile->avatar)
+                                            @if ($user->userProfile && $user->userProfile->avatar && $user->userProfile->avatar!='N/A' )
                                                 <img class="w-10 h-10 rounded-full"
                                                     src="{{ asset('/assets/uploads/imgs/avatars/' . $user->userProfile->avatar) }}"
                                                     alt="user">

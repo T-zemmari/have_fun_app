@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,15 +13,15 @@ class AdminController extends Controller
     {
 
         $users = User::with('userProfile')->get();
-       // dump($users);die;
+        // dump($users);die;
 
         return view('admin.users', ['users' => $users]);
     }
 
     public function gameList()
     {
-
-        return view('admin.games');
+        $games = Game::all();
+        return view('admin.games', ['games' => $games]);
     }
 
     public function addGame()
