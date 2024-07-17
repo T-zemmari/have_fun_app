@@ -56,6 +56,22 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/dashboard/lista_de_juegos', function () {
+    return view('admin.list');
+})->middleware(['auth', 'verified'])->name('admin.list');
+
+Route::get('/dashboard/lista_de_juegos/anyadir', function () {
+    return view('admin.add');
+})->middleware(['auth', 'verified'])->name('admin.add');
+
+Route::get('/dashboard/usuarios', function () {
+    return view('admin.users');
+})->middleware(['auth', 'verified'])->name('admin.users');
+
+Route::get('/dashboard/permisos', function () {
+    return view('admin.permises');
+})->middleware(['auth', 'verified'])->name('admin.permises');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/mi-perfil', [ProfileController::class, 'edit'])->name('profile.edit');

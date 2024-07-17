@@ -41,7 +41,7 @@
                             <span class="ms-3 text-[14px] mt-1 uppercase">Inicio</span>
                         </a>
                     </li>
-                    @if (Auth::user()->user_type == 'super_admin')
+                    @if (Auth::user()->user_type == 'super_user')
                         <li class="cursor-pointer">
                             <button type="button"
                                 class="flex items-center w-full p-2 text-base text-white transition duration-75 rounded-sm group hover:bg-[#374151]"
@@ -59,7 +59,7 @@
                             </button>
                             <ul id="dropdown-usuarios_permisos" class="py-2 space-y-2">
                                 <li class="cursor-pointer">
-                                    <a href="{{ route('lista_usuarios') }}">
+                                    <a href="{{ route('admin.users') }}">
                                         <span
                                             class="text-[14px] flex items-center w-full p-1 text-[#bac0d2] transition duration-75 rounded-sm pl-11 group hover:bg-[#374151] ">
                                             Usuarios
@@ -67,18 +67,10 @@
                                     </a>
                                 </li>
                                 <li class="cursor-pointer">
-                                    <a href="">
+                                    <a href="{{ route('admin.permises') }}">
                                         <span
                                             class="text-[14px] flex items-center w-full p-1 text-[#bac0d2] transition duration-75 rounded-sm pl-11 group hover:bg-[#374151]  ">
                                             Permisos
-                                        </span>
-                                    </a>
-                                </li>
-                                <li class="cursor-pointer">
-                                    <a href="">
-                                        <span
-                                            class="text-[14px] flex items-center w-full p-1 text-[#bac0d2] transition duration-75 rounded-sm pl-11 group hover:bg-[#374151]  ">
-                                            Grupos
                                         </span>
                                     </a>
                                 </li>
@@ -100,10 +92,18 @@
                         </button>
                         <ul id="dropdown-mis_temarios" class="py-2 space-y-2">
                             <li class="cursor-pointer">
-                                <a href="">
+                                <a href="{{ route('admin.list') }}">
                                     <span
                                         class="text-[14px] flex items-center w-full p-1 text-[#bac0d2] transition duration-75 rounded-sm pl-11 group hover:bg-[#374151] ">
                                         Lista de los juegos
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="cursor-pointer">
+                                <a href="{{ route('admin.add') }}">
+                                    <span
+                                        class="text-[14px] flex items-center w-full p-1 text-[#bac0d2] transition duration-75 rounded-sm pl-11 group hover:bg-[#374151] ">
+                                        Añadir juego
                                     </span>
                                 </a>
                             </li>
