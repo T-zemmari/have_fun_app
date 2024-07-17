@@ -55,7 +55,7 @@ class RegisteredUserController extends Controller
             'phone' => 'N/A',
             'adress' => 'N/A',
             'avatar' => 'N/A',
-            'active' => 0,
+            'active' => 1,
         ]);
 
         event(new Registered($user));

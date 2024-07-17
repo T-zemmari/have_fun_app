@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/lista_de_juegos/anyadir', [AdminController::class, 'addGame'])->name('admin.add-game');
     Route::get('/dashboard/usuario', [AdminController::class, 'getUsers'])->name('admin.users');
     Route::get('/dashboard/permisos', [AdminController::class, 'getPermises'])->name('admin.permises');
+    
 });
 
 
@@ -71,6 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/mi-perfil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/mi-perfil', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/mi-perfil', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/profile/change-avatar', [ProfileController::class, 'changeAvatar'])->name('profile.change-avatar');
 });
 
 require __DIR__ . '/auth.php';

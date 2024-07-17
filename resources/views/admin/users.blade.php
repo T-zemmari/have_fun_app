@@ -66,8 +66,23 @@
                                     </div>
                                 </td>
                                 <td scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap ">
-                                    <img class="w-10 h-10 rounded-full" src="{{ asset('/assets/imgs/admin_1.png') }}"
-                                        alt="user">
+
+                                    <form id="avatar-form" action="{{ route('profile.change-avatar') }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        <label for="avatar" class="cursor-pointer text-blue-600 hover:underline">
+                                            @if ($user->userProfile && $user->userProfile->avatar)
+                                                <img class="w-10 h-10 rounded-full"
+                                                    src="{{asset('/assets/uploads/imgs/avatars/' . $user->userProfile->avatar)}}"
+                                                    alt="user">
+                                            @else
+                                                <img class="w-10 h-10 rounded-full"
+                                                    src="{{ asset('/assets/imgs/admin_1.png') }}" alt="user">
+                                            @endif
+                                        </label>
+                                        <input type="file" id="avatar" name="avatar" class="hidden"
+                                            onchange="document.getElementById('avatar-form').submit()">
+                                    </form>
                                     <div class="ps-3">
                                         <div class="text-base font-semibold">{{ $user['name'] }}
                                             {{ $user['last_name'] }}</div>
