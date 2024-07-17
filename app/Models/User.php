@@ -47,47 +47,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-
-    /**
-     * Get the grupo that owns the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function grupo()
-    {
-        return $this->belongsTo(Grupo::class);
-    }
-
-    /**
-     * Get all of the posts for the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function posts()
-    {
-        return $this->hasMany(Post::class);
-    }
-
-    /**
-     * Get all of the reposts for the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function reposts()
-    {
-        return $this->hasMany(Repost::class);
-    }
-
-    /**
-     * Get all of the temas for the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function temas()
-    {
-        return $this->hasMany(Tema::class);
-    }
-
     /**
      * Get the Userprofile associated with the User
      *

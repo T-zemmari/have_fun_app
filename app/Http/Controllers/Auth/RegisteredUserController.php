@@ -50,6 +50,14 @@ class RegisteredUserController extends Controller
             'user_type' => $user_type,
         ]);
 
+        $user->userProfile()->create([
+            'user_id' => $user->id,
+            'phone' => 'N/A',
+            'adress' => 'N/A',
+            'avatar' => 'N/A',
+            'active' => 0,
+        ]);
+
         event(new Registered($user));
 
         //Auth::login($user);

@@ -92,7 +92,7 @@
                         </button>
                         <ul id="dropdown-mis_temarios" class="py-2 space-y-2">
                             <li class="cursor-pointer">
-                                <a href="{{ route('admin.list') }}">
+                                <a href="{{ route('admin.games') }}">
                                     <span
                                         class="text-[14px] flex items-center w-full p-1 text-[#bac0d2] transition duration-75 rounded-sm pl-11 group hover:bg-[#374151] ">
                                         Lista de los juegos
@@ -100,7 +100,7 @@
                                 </a>
                             </li>
                             <li class="cursor-pointer">
-                                <a href="{{ route('admin.add') }}">
+                                <a href="{{ route('admin.add-game') }}">
                                     <span
                                         class="text-[14px] flex items-center w-full p-1 text-[#bac0d2] transition duration-75 rounded-sm pl-11 group hover:bg-[#374151] ">
                                         Añadir juego
