@@ -73,7 +73,7 @@
                                         <label for="avatar" class="cursor-pointer text-blue-600 hover:underline">
                                             @if ($user->userProfile && $user->userProfile->avatar)
                                                 <img class="w-10 h-10 rounded-full"
-                                                    src="{{asset('/assets/uploads/imgs/avatars/' . $user->userProfile->avatar)}}"
+                                                    src="{{ asset('/assets/uploads/imgs/avatars/' . $user->userProfile->avatar) }}"
                                                     alt="user">
                                             @else
                                                 <img class="w-10 h-10 rounded-full"
