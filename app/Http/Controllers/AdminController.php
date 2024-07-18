@@ -45,7 +45,7 @@ class AdminController extends Controller
                     return $query->where('route_name', $request->route_name);
                 }),
             ],
-            'url_img' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'url_img' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
             'active' => 'required|boolean',
             'show_in_web' => 'required|boolean',
         ]);
