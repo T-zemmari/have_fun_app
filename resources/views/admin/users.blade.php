@@ -13,9 +13,10 @@
                                 d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                         </svg>
                     </div>
-                    <input type="text" id="table-search-users"
+                    <input type="text" id="table-search-users" onkeyup="filterTable()"
                         class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Buscar un usuario">
+
                 </div>
             </div>
             @if (!isset($users) || count($users) == 0)
@@ -24,7 +25,7 @@
                     <span class="font-medium">La lista de usuario está vacía</span>.
                 </div>
             @else
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500" id="usersTable">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50  ">
                         <tr>
                             <th scope="col" class="p-4">
@@ -130,6 +131,25 @@
 </x-admin-base>
 
 <script>
+    function filterTable() {
+        let input = document.getElementById('table-search-users');
+        let filter = input.value.toLowerCase();
+        let table = document.getElementById('usersTable');
+        let trs = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < trs.length; i++) {
+            let tds = trs[i].getElementsByTagName('td');
+            let match = false;
+            for (let j = 0; j < tds.length; j++) {
+                if (tds[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                    match = true;
+                    break;
+                }
+            }
+            trs[i].style.display = match ? '' : 'none';
+        }
+    }
+
     function deleteUser(userId) {
         Swal.fire({
             html: "<h4><strong>¿ Quieres eliminar ?<strong></h4>",

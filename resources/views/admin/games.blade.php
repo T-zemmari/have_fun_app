@@ -12,9 +12,10 @@
                                 d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                         </svg>
                     </div>
-                    <input type="text" id="table-search-users"
-                        class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Buscar un juego">
+                    <input type="text" id="table-search-games"
+                        class="block p-2 ps-10 text-sm text-gray-900
+                        border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Buscar un juego" onkeyup="filter_table()">
                 </div>
             </div>
 
@@ -24,7 +25,7 @@
                     <span class="font-medium">La lista de juegos está vacía</span>.
                 </div>
             @else
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500" id="gamesTable">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th scope="col" class="p-4">
@@ -135,6 +136,26 @@
 </x-admin-base>
 
 <script>
+    function filter_table() {
+
+        let input = document.getElementById('table-search-games');
+        let filter = input.value.toLowerCase();
+        let table = document.getElementById('gamesTable');
+        let trs = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < trs.length; i++) {
+            let tds = trs[i].getElementsByTagName('td');
+            let match = false;
+            for (let j = 0; j < tds.length; j++) {
+                if (tds[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                    match = true;
+                    break;
+                }
+            }
+            trs[i].style.display = match ? '' : 'none';
+        }
+    }
+
     function fn_update_active(id, active) {
         $.ajax({
             url: '/dashboard/games/modificar-estado/' + id,
