@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('route_name');
             $table->string('url_img');
             $table->integer('active');
+            $table->integer('free_or_paid');
             $table->integer('show_in_web');
             $table->timestamps();
         });

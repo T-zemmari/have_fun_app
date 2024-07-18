@@ -49,6 +49,7 @@ class AdminController extends Controller
             ],
             'url_img' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
             'active' => 'required|boolean',
+            'free_or_paid' => 'required|boolean',
             'show_in_web' => 'required|boolean',
         ]);
 
@@ -70,6 +71,7 @@ class AdminController extends Controller
         $game->route_name = $request->input('route_name');
         $game->url_img = '/' . $imagePath . '/' . $imageName;
         $game->active = $request->boolean('active') ? 1 : 0;
+        $game->free_or_paid = $request->boolean('free_or_paid') ? 1 : 0;
         $game->show_in_web = $request->boolean('show_in_web') ? 1 : 0;
 
         // Guardar el juego si pasa todas las validaciones
@@ -101,6 +103,21 @@ class AdminController extends Controller
             $game->show_in_web = $request->input('show_in_web') ? true : false;
             $game->save();
             return response()->json(['message' => 'Estado actualizado correctamente'], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'code' => 422,
+                'errors' => $e->errors()
+            ], 422);
+        }
+    }
+
+    public function updateFreeOrPaid($id, Request $request)
+    {
+        try {
+            $game = Game::findOrFail($id);
+            $game->free_or_paid = $request->input('free_or_paid') ? true : false;
+            $game->save();
+            return response()->json(['message' => 'Free Or Paid actualizado correctamente'], 200);
         } catch (ValidationException $e) {
             return response()->json([
                 'code' => 422,
@@ -163,11 +180,11 @@ class AdminController extends Controller
     {
         try {
             $user = User::findOrFail($id);
-    
+
             if ($user->id === Auth::id()) {
                 throw new \Exception('No puedes eliminar tu propia cuenta.', 403);
             }
-    
+
             if ($user->userProfile) {
                 if ($user->userProfile->avatar && $user->userProfile->avatar != 'N/A') {
                     $avatarPath = public_path('assets/uploads/imgs/avatars/' . $user->userProfile->avatar);
@@ -177,9 +194,9 @@ class AdminController extends Controller
                 }
                 $user->userProfile->delete();
             }
-    
+
             $user->delete();
-    
+
             return response()->json(['message' => 'Usuario eliminado correctamente.'], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -188,7 +205,7 @@ class AdminController extends Controller
             ], 500);
         }
     }
-    
+
 
 
     public function getPermises()

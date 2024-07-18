@@ -38,7 +38,7 @@
                             <th scope="col" class="px-6 py-3">Ruta</th>
                             <th scope="col" class="px-6 py-3">Mostrar En Web</th>
                             <th scope="col" class="px-6 py-3">Estado</th>
-                            <th scope="col" class="px-6 py-3">Imagen</th>
+                            <th scope="col" class="px-6 py-3">Gratis</th>
                             <th scope="col" class="px-6 py-3">Acciones</th>
                         </tr>
                     </thead>
@@ -66,7 +66,7 @@
                                     </div>
                                 </td>
 
-                            <td class="px-6 py-4">
+                                <td class="px-6 py-4">
                                     <div class="flex items-center">
                                         {{ $game->route_name }}
                                     </div>
@@ -85,6 +85,7 @@
                                         </label>
                                     </div>
                                 </td>
+
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
                                         <label class="inline-flex items-center mb-5 cursor-pointer"
@@ -93,6 +94,21 @@
                                                 id="active_{{ $game->id }}" name="active"
                                                 {{ $game->active == 1 ? 'checked' : '' }}
                                                 onchange="fn_update_active('{{ $game->id }}', {{ $game->active }})">
+                                            <div
+                                                class="relative ml-2 mt-4 w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600">
+                                            </div>
+                                        </label>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <label class="inline-flex items-center mb-5 cursor-pointer"
+                                            for="free_or_paid_{{ $game->id }}">
+                                            <input type="checkbox" value="1" class="sr-only peer"
+                                                id="free_or_paid_{{ $game->id }}" name="free_or_paid"
+                                                {{ $game->free_or_paid == 1 ? 'checked' : '' }}
+                                                onchange="fn_update_free_or_paid('{{ $game->id }}', {{ $game->free_or_paid }})">
                                             <div
                                                 class="relative ml-2 mt-4 w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600">
                                             </div>
@@ -166,6 +182,36 @@
             },
             error: function(xhr, status, error) {
                 console.error("Error show_in_web:", error);
+                let errors = xhr.responseJSON.errors;
+                let errorMessages = '';
+                for (let field in errors) {
+                    errorMessages += `${errors[field].join('<br>')}<br>`;
+                }
+                Swal.fire({
+                    html: `<h4><b>Operación fallida</b></h4><p>${errorMessages}</p>`,
+                    icon: `error`,
+                });
+            }
+        });
+    }
+
+    function fn_update_free_or_paid(id, free_or_paid) {
+        $.ajax({
+            url: '/dashboard/games/modificar-free-or-paid/' + id,
+            type: 'PATCH',
+            data: {
+                free_or_paid: free_or_paid ? 0 : 1,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                console.log(response.message);
+                Swal.fire({
+                    html: `<h4><b>Operación realizada correctamente.</b></h4>`,
+                    icon: `success`,
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error free_or_paid:", error);
                 let errors = xhr.responseJSON.errors;
                 let errorMessages = '';
                 for (let field in errors) {

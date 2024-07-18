@@ -22,6 +22,7 @@ class Game extends Model
         'url_img',
         'active',
         'show_in_web',
+        'free_or_paid',
     ];
 
 

@@ -124,50 +124,50 @@
 </x-admin-base>
 
 <script>
-  function deleteUser(userId) {
-    Swal.fire({
-        html: "<h4><strong>¿ Quieres eliminar ?<strong></h4>",
-        showDenyButton: true,
-        showCancelButton: false,
-        confirmButtonText: "Eliminar",
-        denyButtonText: `Cancelar`,
-        icon: 'question'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '/dashboard/users/delete/' + userId,
-                type: 'DELETE',
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    console.log(response.message);
-                    $('#tr_user_' + userId).remove();
-                    Swal.fire({
-                        html: `<h4><b>Usuario eliminado correctamente.</b></h4>`,
-                        icon: `success`,
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error al eliminar usuario:", error);
-                    let errorMessage = xhr.responseJSON.message;
-                    let errorCode = xhr.responseJSON.code;
-                    
-                    if (errorCode === 403 && errorMessage === 'No puedes eliminar tu propia cuenta.') {
+    function deleteUser(userId) {
+        Swal.fire({
+            html: "<h4><strong>¿ Quieres eliminar ?<strong></h4>",
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: "Eliminar",
+            denyButtonText: `Cancelar`,
+            icon: 'question'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/dashboard/users/delete/' + userId,
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        console.log(response.message);
+                        $('#tr_user_' + userId).remove();
                         Swal.fire({
-                            html: `<h4><b>No puedes eliminar tu propia cuenta</b></h4>`,
-                            icon: `error`,
+                            html: `<h4><b>Usuario eliminado correctamente.</b></h4>`,
+                            icon: `success`,
                         });
-                    } else {
-                        Swal.fire({
-                            html: `<h4><b>Error al eliminar usuario</b></h4><p>${errorMessage}</p>`,
-                            icon: `error`,
-                        });
-                    }
-                }
-            });
-        }
-    });
-}
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error al eliminar usuario:", error);
+                        let errorMessage = xhr.responseJSON.message;
+                        let errorCode = xhr.responseJSON.code;
 
+                        if (errorCode === 403 && errorMessage ===
+                            'No puedes eliminar tu propia cuenta.') {
+                            Swal.fire({
+                                html: `<h4><b>No puedes eliminar tu propia cuenta</b></h4>`,
+                                icon: `error`,
+                            });
+                        } else {
+                            Swal.fire({
+                                html: `<h4><b>Error al eliminar usuario</b></h4><p>${errorMessage}</p>`,
+                                icon: `error`,
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
 </script>

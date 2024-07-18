@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -48,7 +49,8 @@ Route::get('/juegos/bullet_game', function () {
 })->name('bullet_game');
 
 
-Route::get('/juegos',[GameController::class, 'getGames'])->name('coleccion');
+Route::get('/juegos', [GameController::class, 'getGames'])->name('coleccion');
+Route::post('/contact', [ContactController::class, 'sendMail'])->name('contact.send');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -62,7 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/lista_de_juegos/anyadir', [AdminController::class, 'addGame'])->name('admin.add-game');
     Route::get('/dashboard/usuario', [AdminController::class, 'getUsers'])->name('admin.users');
     Route::get('/dashboard/permisos', [AdminController::class, 'getPermises'])->name('admin.permises');
-    
+
 
     Route::post('/dashboard/new_game', [AdminController::class, 'storeGame'])->name('new_game');
     Route::post('/dashboard/change-img-game/{id}', [AdminController::class, 'changeImgGame'])->name('change-img-game');
@@ -70,10 +72,10 @@ Route::middleware('auth')->group(function () {
 
     Route::patch('/dashboard/games/modificar-estado/{id}', [AdminController::class, 'updateActive'])->name('update-active');
     Route::patch('/dashboard/games/modificar-show-in-web/{id}', [AdminController::class, 'updateShowInWeb'])->name('update-show-in-web');
+    Route::patch('/dashboard/games/modificar-free-or-paid/{id}', [AdminController::class, 'updateFreeOrPaid'])->name('update-free-or-paid');
 
     Route::delete('/dashboard/games/{id}', [AdminController::class, 'deleteGame'])->name('delete-game');
     Route::delete('/dashboard/users/delete/{id}', [AdminController::class, 'deleteUser'])->name('delete-user');
-    
 });
 
 
