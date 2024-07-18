@@ -38,6 +38,7 @@
                             <th scope="col" class="px-6 py-3">Ruta</th>
                             <th scope="col" class="px-6 py-3">Mostrar En Web</th>
                             <th scope="col" class="px-6 py-3">Estado</th>
+                            <th scope="col" class="px-6 py-3">Imagen</th>
                             <th scope="col" class="px-6 py-3">Acciones</th>
                         </tr>
                     </thead>
@@ -51,28 +52,21 @@
                                         <label for="chkbox_search_game_{{ $game->id }}" class="sr-only"></label>
                                     </div>
                                 </td>
-                                <td scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap ">
-                                    <form id="game-form-{{ $game->id }}" action="{{ route('change-img-game') }}"
-                                        method="POST" enctype="multipart/form-data">
-                                        @csrf
-                                        <label for="avatar" class="cursor-pointer text-blue-600 hover:underline">
-                                            @if ($game->url_img)
-                                                <img class="w-10 h-10 rounded-full" src="{{ asset($game->url_img) }}"
-                                                    alt="game">
-                                            @else
-                                                <img class="w-10 h-10 rounded-full"
-                                                    src="{{ asset('/assets/imgs/admin_1.png') }}" alt="placeholder">
-                                            @endif
-                                        </label>
-                                        <input type="file" id="image_game" name="image_game" class="hidden"
-                                            onchange="document.getElementById('game-form-{{ $game->id }}').submit()">
-                                    </form>
+                                <td scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap">
+                                    <label for="image_game_{{ $game->id }}"
+                                        class="cursor-pointer text-blue-600 hover:underline">
+                                        <img class="w-10 h-10 rounded-full" id="img_game_{{ $game->id }}"
+                                            src="{{ asset($game->url_img) }}" alt="game">
+                                    </label>
+                                    <input type="file" id="image_game_{{ $game->id }}" name="image_game"
+                                        class="hidden" onchange="update_game_image('{{ $game->id }}')">
                                     <div class="ps-3">
                                         <div class="text-base font-semibold">{{ $game->name }}</div>
                                         <div class="font-normal text-gray-500">{{ $game->created_at }}</div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4">
+
+                            <td class="px-6 py-4">
                                     <div class="flex items-center">
                                         {{ $game->route_name }}
                                     </div>
@@ -85,7 +79,6 @@
                                                 id="show_in_web_{{ $game->id }}" name="show_in_web"
                                                 {{ $game->show_in_web == 1 ? 'checked' : '' }}
                                                 onchange="fn_update_show_in_web('{{ $game->id }}', {{ $game->show_in_web }})">
-                                                
                                             <div
                                                 class="relative ml-2 mt-4 w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600">
                                             </div>
@@ -180,6 +173,47 @@
                 }
                 Swal.fire({
                     html: `<h4><b>Operación fallida</b></h4><p>${errorMessages}</p>`,
+                    icon: `error`,
+                });
+            }
+        });
+    }
+
+    function update_game_image(gameId) {
+        let formData = new FormData();
+        let input = document.getElementById('image_game_' + gameId);
+        formData.append('image_game', input.files[0]);
+        formData.append('_token', '{{ csrf_token() }}');
+
+        $.ajax({
+            url: '/dashboard/change-img-game/' + gameId,
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                console.log(response.message);
+                Swal.fire({
+                    html: `<h4><b>Imagen actualizada correctamente.</b></h4>`,
+                    icon: `success`,
+                });
+
+                // Actualizar la imagen en la interfaz
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    document.querySelector(`#tr_game_${gameId} img`).src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error al actualizar la imagen:", error);
+                let errors = xhr.responseJSON.errors;
+                let errorMessages = '';
+                for (let field in errors) {
+                    errorMessages += `${errors[field].join('<br>')}<br>`;
+                }
+                Swal.fire({
+                    html: `<h4><b>Error al actualizar la imagen</b></h4><p>${errorMessages}</p>`,
                     icon: `error`,
                 });
             }

@@ -109,6 +109,40 @@ class AdminController extends Controller
         }
     }
 
+    public function changeImgGame(Request $request, $id)
+    {
+
+        try {
+            $request->validate([
+                'image_game' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10000'],
+            ]);
+
+            $game = Game::findOrFail($id);
+
+            if ($game->url_img) {
+                $imagePath = public_path('assets/uploads/imgs/games/' . $game->url_img);
+
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+            }
+
+            $imageName = $request->file('image_game')->getClientOriginalName();
+            $request->file('image_game')->move(public_path('assets/uploads/imgs/games/'), $imageName);
+
+            $game->url_img = '/assets/uploads/imgs/games/' . $imageName;
+            $game->save();
+
+            return response()->json(['message' => 'Imagen actualizada correctamente.']);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'code' => 422,
+                'errors' => $e->errors()
+            ], 422);
+        }
+    }
+
     public function deleteGame($id)
     {
         $game = Game::findOrFail($id);
