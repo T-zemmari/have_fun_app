@@ -48,6 +48,14 @@ Route::get('/juegos/bullet_game', function () {
     return view('juegos.bullet_game');
 })->name('bullet_game');
 
+Route::get('/juegos/space_war', function () {
+    return view('juegos.space_war');
+})->name('space_war');
+
+Route::get('/juegos/treasure_hunt', function () {
+    return view('juegos.treasure_hunt');
+})->name('treasure_hunt');
+
 
 Route::get('/juegos', [GameController::class, 'getGames'])->name('coleccion');
 Route::post('/contact', [ContactController::class, 'sendMail'])->name('contact.send');
