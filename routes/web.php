@@ -17,7 +17,7 @@ Route::get('/acerca-de', function () {
 })->name('about');
 
 Route::get('/contacto', function () {
-    return view('contact');
+    return view('emails.contact');
 })->name('contact');
 
 Route::get('/juegos/tetris_one', function () {
