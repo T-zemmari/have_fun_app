@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,11 +48,7 @@ Route::get('/juegos/bullet_game', function () {
 })->name('bullet_game');
 
 
-Route::get('/juegos', function () {
-    return view('juegos.coleccion');
-})->name('coleccion');
-
-
+Route::get('/juegos',[GameController::class, 'getGames'])->name('coleccion');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -67,7 +64,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/new_game', [AdminController::class, 'storeGame'])->name('new_game');
     Route::post('/dashboard/change-img-game', [AdminController::class, 'changeImgGame'])->name('change-img-game');
     Route::delete('/dashboard/games/{id}', [AdminController::class, 'deleteGame'])->name('delete-game');
-
 });
 
 
