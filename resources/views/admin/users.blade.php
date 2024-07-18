@@ -21,7 +21,7 @@
             @if (!isset($users) || count($users) == 0)
                 <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                     role="alert">
-                    <span class="font-medium">La lista de usuario esta vacia</span>.
+                    <span class="font-medium">La lista de usuario está vacía</span>.
                 </div>
             @else
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500">
@@ -66,23 +66,16 @@
                                     </div>
                                 </td>
                                 <td scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap ">
-
-                                    <form id="avatar-form" action="{{ route('profile.change-avatar') }}" method="POST"
-                                        enctype="multipart/form-data">
-                                        @csrf
-                                        <label for="avatar" class="cursor-pointer text-blue-600 hover:underline">
-                                            @if ($user->userProfile && $user->userProfile->avatar && $user->userProfile->avatar!='N/A' )
-                                                <img class="w-10 h-10 rounded-full"
-                                                    src="{{ asset('/assets/uploads/imgs/avatars/' . $user->userProfile->avatar) }}"
-                                                    alt="user">
-                                            @else
-                                                <img class="w-10 h-10 rounded-full"
-                                                    src="{{ asset('/assets/imgs/admin_1.png') }}" alt="user">
-                                            @endif
-                                        </label>
-                                        <input type="file" id="avatar" name="avatar" class="hidden"
-                                            onchange="document.getElementById('avatar-form').submit()">
-                                    </form>
+                                    <label for="avatar" class="text-blue-600 hover:underline">
+                                        @if ($user->userProfile && $user->userProfile->avatar && $user->userProfile->avatar != 'N/A')
+                                            <img class="w-10 h-10 rounded-full"
+                                                src="{{ asset('/assets/uploads/imgs/avatars/' . $user->userProfile->avatar) }}"
+                                                alt="user">
+                                        @else
+                                            <img class="w-10 h-10 rounded-full"
+                                                src="{{ asset('/assets/imgs/admin_1.png') }}" alt="user">
+                                        @endif
+                                    </label>
                                     <div class="ps-3">
                                         <div class="text-base font-semibold">{{ $user['name'] }}
                                             {{ $user['last_name'] }}</div>
@@ -104,7 +97,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
-                                        {{ $user->userProfile ? $user->userProfile->adress : 'No disponible' }}
+                                        {{ $user->userProfile ? $user->userProfile->address : 'No disponible' }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
@@ -116,7 +109,8 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <a href="#" class="font-medium text-blue-600  hover:underline">Editar</a>
+                                    <button type="button" onclick="deleteUser('{{ $user['id'] }}')"
+                                        class="font-medium text-red-600 hover:underline">Eliminar</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -128,3 +122,52 @@
 
     </div>
 </x-admin-base>
+
+<script>
+  function deleteUser(userId) {
+    Swal.fire({
+        html: "<h4><strong>¿ Quieres eliminar ?<strong></h4>",
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: "Eliminar",
+        denyButtonText: `Cancelar`,
+        icon: 'question'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/dashboard/users/delete/' + userId,
+                type: 'DELETE',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    console.log(response.message);
+                    $('#tr_user_' + userId).remove();
+                    Swal.fire({
+                        html: `<h4><b>Usuario eliminado correctamente.</b></h4>`,
+                        icon: `success`,
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al eliminar usuario:", error);
+                    let errorMessage = xhr.responseJSON.message;
+                    let errorCode = xhr.responseJSON.code;
+                    
+                    if (errorCode === 403 && errorMessage === 'No puedes eliminar tu propia cuenta.') {
+                        Swal.fire({
+                            html: `<h4><b>No puedes eliminar tu propia cuenta</b></h4>`,
+                            icon: `error`,
+                        });
+                    } else {
+                        Swal.fire({
+                            html: `<h4><b>Error al eliminar usuario</b></h4><p>${errorMessage}</p>`,
+                            icon: `error`,
+                        });
+                    }
+                }
+            });
+        }
+    });
+}
+
+</script>

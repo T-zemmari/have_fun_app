@@ -134,7 +134,6 @@ class AdminController extends Controller
             $game->save();
 
             return response()->json(['message' => 'Imagen actualizada correctamente.']);
-
         } catch (ValidationException $e) {
             return response()->json([
                 'code' => 422,
@@ -159,6 +158,37 @@ class AdminController extends Controller
 
         return redirect()->route('admin.games')->with('success', 'Juego eliminado exitosamente.');
     }
+
+    public function deleteUser($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+    
+            if ($user->id === Auth::id()) {
+                throw new \Exception('No puedes eliminar tu propia cuenta.', 403);
+            }
+    
+            if ($user->userProfile) {
+                if ($user->userProfile->avatar && $user->userProfile->avatar != 'N/A') {
+                    $avatarPath = public_path('assets/uploads/imgs/avatars/' . $user->userProfile->avatar);
+                    if (File::exists($avatarPath)) {
+                        File::delete($avatarPath);
+                    }
+                }
+                $user->userProfile->delete();
+            }
+    
+            $user->delete();
+    
+            return response()->json(['message' => 'Usuario eliminado correctamente.'], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => $e->getCode(),
+                'message' => $e->getMessage(), // Use the exception message directly
+            ], 500);
+        }
+    }
+    
 
 
     public function getPermises()

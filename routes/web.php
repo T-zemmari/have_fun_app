@@ -57,15 +57,23 @@ Route::get('/dashboard', function () {
 
 
 Route::middleware('auth')->group(function () {
+
     Route::get('/dashboard/lista_de_juegos', [AdminController::class, 'gameList'])->name('admin.games');
     Route::get('/dashboard/lista_de_juegos/anyadir', [AdminController::class, 'addGame'])->name('admin.add-game');
     Route::get('/dashboard/usuario', [AdminController::class, 'getUsers'])->name('admin.users');
     Route::get('/dashboard/permisos', [AdminController::class, 'getPermises'])->name('admin.permises');
+    
+
     Route::post('/dashboard/new_game', [AdminController::class, 'storeGame'])->name('new_game');
     Route::post('/dashboard/change-img-game/{id}', [AdminController::class, 'changeImgGame'])->name('change-img-game');
-    Route::delete('/dashboard/games/{id}', [AdminController::class, 'deleteGame'])->name('delete-game');
+
+
     Route::patch('/dashboard/games/modificar-estado/{id}', [AdminController::class, 'updateActive'])->name('update-active');
     Route::patch('/dashboard/games/modificar-show-in-web/{id}', [AdminController::class, 'updateShowInWeb'])->name('update-show-in-web');
+
+    Route::delete('/dashboard/games/{id}', [AdminController::class, 'deleteGame'])->name('delete-game');
+    Route::delete('/dashboard/users/delete/{id}', [AdminController::class, 'deleteUser'])->name('delete-user');
+    
 });
 
 
