@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+
 
 class AdminController extends Controller
 {
@@ -74,6 +76,37 @@ class AdminController extends Controller
         $game->save();
 
         return redirect()->route('admin.games')->with('success', 'Juego creado exitosamente.');
+    }
+
+
+    public function updateActive($id, Request $request)
+    {
+        try {
+            $game = Game::findOrFail($id);
+            $game->active = $request->input('active') ? true : false;
+            $game->save();
+            return response()->json(['message' => 'Estado actualizado correctamente'], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'code' => 422,
+                'errors' => $e->errors()
+            ], 422);
+        }
+    }
+
+    public function updateShowInWeb($id, Request $request)
+    {
+        try {
+            $game = Game::findOrFail($id);
+            $game->show_in_web = $request->input('show_in_web') ? true : false;
+            $game->save();
+            return response()->json(['message' => 'Estado actualizado correctamente'], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'code' => 422,
+                'errors' => $e->errors()
+            ], 422);
+        }
     }
 
     public function deleteGame($id)

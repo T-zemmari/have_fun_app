@@ -64,6 +64,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/new_game', [AdminController::class, 'storeGame'])->name('new_game');
     Route::post('/dashboard/change-img-game', [AdminController::class, 'changeImgGame'])->name('change-img-game');
     Route::delete('/dashboard/games/{id}', [AdminController::class, 'deleteGame'])->name('delete-game');
+    Route::patch('/dashboard/games/modificar-estado/{id}', [AdminController::class, 'updateActive'])->name('update-active');
+    Route::patch('/dashboard/games/modificar-show-in-web/{id}', [AdminController::class, 'updateShowInWeb'])->name('update-show-in-web');
 });
 
 
