@@ -5,10 +5,10 @@
                 <label for="table-search" class="sr-only">Buscar</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                        <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                             fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                         </svg>
                     </div>
                     <input type="text" id="table-search-users"
@@ -34,6 +34,7 @@
                                 </div>
                             </th>
                             <th scope="col" class="px-6 py-3">Juego</th>
+                            <th scope="col" class="px-6 py-3">Ruta</th>
                             <th scope="col" class="px-6 py-3">Mostrar En Web</th>
                             <th scope="col" class="px-6 py-3">Estado</th>
                             <th scope="col" class="px-6 py-3">Acciones</th>
@@ -51,8 +52,9 @@
                                 </td>
                                 <td scope="row"
                                     class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap ">
-                                    <form id="game-form-{{ $game->id }}" action="{{ route('change-img-game') }}"
-                                        method="POST" enctype="multipart/form-data">
+                                    <form id="game-form-{{ $game->id }}"
+                                        action="{{ route('change-img-game') }}" method="POST"
+                                        enctype="multipart/form-data">
                                         @csrf
                                         <label for="avatar"
                                             class="cursor-pointer text-blue-600 hover:underline">
@@ -76,6 +78,11 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
+                                        {{ $game->route_name }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
                                         {{ $game->show_in_web && $game->show_in_web == 1 ? 'Si' : 'No' }}
                                     </div>
                                 </td>
@@ -89,7 +96,8 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <form id="delete-form-{{ $game->id }}"
-                                        action="{{ route('delete-game', ['id' => $game->id]) }}" method="POST">
+                                        action="{{ route('delete-game', ['id' => $game->id]) }}" method="POST"
+                                        onsubmit="return confirm('¿Estás seguro de que deseas eliminar este juego?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"

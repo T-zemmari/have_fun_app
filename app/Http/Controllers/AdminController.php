@@ -7,8 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-
-
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -34,10 +33,18 @@ class AdminController extends Controller
 
     public function storeGame(Request $request)
     {
+        // Validaciones + evitar duplicados
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'route_name' => 'required|string|max:255',
+            'route_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('games')->where(function ($query) use ($request) {
+                    return $query->where('route_name', $request->route_name);
+                }),
+            ],
             'url_img' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'active' => 'required|boolean',
             'show_in_web' => 'required|boolean',
@@ -54,6 +61,7 @@ class AdminController extends Controller
         // Guardar la imagen
         $request->file('url_img')->move(public_path($imagePath), $imageName);
 
+        // Crear el juego
         $game = new Game();
         $game->name = $request->input('name');
         $game->description = $request->input('description');
@@ -61,6 +69,8 @@ class AdminController extends Controller
         $game->url_img = '/' . $imagePath . '/' . $imageName;
         $game->active = $request->boolean('active') ? 1 : 0;
         $game->show_in_web = $request->boolean('show_in_web') ? 1 : 0;
+
+        // Guardar el juego si pasa todas las validaciones
         $game->save();
 
         return redirect()->route('admin.games')->with('success', 'Juego creado exitosamente.');
@@ -74,10 +84,10 @@ class AdminController extends Controller
             $imagePath = public_path('assets/uploads/imgs/games/' . $game->url_img);
 
             if (file_exists($imagePath)) {
-                unlink($imagePath); 
+                unlink($imagePath);
             }
         }
-        
+
         $game->delete();
 
         return redirect()->route('admin.games')->with('success', 'Juego eliminado exitosamente.');
