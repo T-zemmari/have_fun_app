@@ -1,3 +1,51 @@
+@php
+    $juegos = [
+        [
+            'nombre' => 'Tetris',
+            'imagen' => 'tetris_1.png',
+            'ruta' => 'tetris_one',
+            'mostrar_en_web' => 1,
+        ],
+        [
+            'nombre' => 'Ajedrez',
+            'imagen' => 'chess_1.png',
+            'ruta' => 'ajedrez',
+            'mostrar_en_web' => 1,
+        ],
+        [
+            'nombre' => 'Sudoku',
+            'imagen' => 'Img_sudoku/sudoku_1.png',
+            'ruta' => 'sudoku_one',
+            'mostrar_en_web' => 1,
+        ],
+        [
+            'nombre' => 'Memo 1',
+            'imagen' => 'img_memo_1/memo_1.png',
+            'ruta' => 'memo_1',
+            'mostrar_en_web' => 1,
+        ],
+        [
+            'nombre' => 'Damas',
+            'imagen' => 'img_damas/damas_1.png',
+            'ruta' => 'damas',
+            'mostrar_en_web' => 1,
+        ],
+        [
+            'nombre' => 'Phaser demo',
+            'imagen' => 'img_physer/img_1.png',
+            'ruta' => 'demo_physer',
+            'mostrar_en_web' => 0,
+        ],
+        [
+            'nombre' => 'Bullet Game',
+            'imagen' => 'img_bullet_game/img_1.png',
+            'ruta' => 'bullet_game',
+            'mostrar_en_web' => 1,
+        ],
+    ];
+@endphp
+
+
 <x-guest-layout>
     @section('title', 'HAVEFUN - Coleccion')
     @include('layouts.partials.navbar')

@@ -38,6 +38,9 @@
                                 Nombre
                             </th>
                             <th scope="col" class="px-6 py-3">
+                                Tipo
+                            </th>
+                            <th scope="col" class="px-6 py-3">
                                 Roles
                             </th>
                             <th scope="col" class="px-6 py-3">
@@ -81,6 +84,9 @@
                                             {{ $user['last_name'] }}</div>
                                         <div class="font-normal text-gray-500">{{ $user['email'] }}</div>
                                     </div>
+                                </td>
+                                <td>
+                                    {{ strtoupper(str_replace('_', ' ', $user['user_type'])) }}
                                 </td>
                                 <td class="px-6 py-4">
                                     @foreach (json_decode($user->roles, true) as $role)

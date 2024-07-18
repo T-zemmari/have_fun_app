@@ -1,13 +1,12 @@
 <x-guest-layout>
-    @section('title', 'Market Store - Contacto')
+    @section('title', 'HaveFun - Contacto')
     @include('layouts.partials.navbar')
 
-    <div class="w-full flex justify-center items-center md:h-[92.6vh]"
-        style="background: radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50) 0%, rgb(0, 0, 0) 99.4%);">
+    <div class="w-full flex justify-center items-center md:h-[92.6vh]">
         <div class="w-[95%] mt-[90px] md:w-[700px] mx-auto p-1 md:mt-[70px]">
             <div class="text-center mb-2">
 
-                <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-300">
+                <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-600">
                     Rellena <span class="text-indigo-600">el Formulario</span>
                 </h3>
             </div>
@@ -23,7 +22,7 @@
                 @csrf
                 <div class="flex flex-wrap -mx-3 mb-6">
                     <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                        <label class="block uppercase tracking-wide text-gray-300 text-xs font-bold mb-2"
+                        <label class="block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2"
                             for="first_name">
                             Nombre
                         </label>
@@ -32,7 +31,7 @@
                             id="first_name" type="text" name="first_name" placeholder="Nombre" required>
                     </div>
                     <div class="w-full md:w-1/2 px-3">
-                        <label class="block uppercase tracking-wide text-gray-300 text-xs font-bold mb-2"
+                        <label class="block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2"
                             for="last_name">
                             Apellidos
                         </label>
@@ -43,7 +42,7 @@
                 </div>
                 <div class="flex flex-wrap -mx-3 mb-6">
                     <div class="w-full px-3">
-                        <label class="block uppercase tracking-wide text-gray-300 text-xs font-bold mb-2"
+                        <label class="block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2"
                             for="email">
                             Email
                         </label>
@@ -54,7 +53,7 @@
                 </div>
                 <div class="flex flex-wrap -mx-3 mb-6">
                     <div class="w-full px-3">
-                        <label class="block uppercase tracking-wide text-gray-300 text-xs font-bold mb-2"
+                        <label class="block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2"
                             for="message">
                             Mensaje
                         </label>

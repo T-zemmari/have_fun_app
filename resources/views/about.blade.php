@@ -1,5 +1,5 @@
 <x-guest-layout>
-    @section('title', 'HaveFun - Página de inicio')
+    @section('title', 'HaveFun - Acerca de nostros')
     @include('layouts.partials.navbar')
 
     <section class="h-screen flex flex-col justify-center items-center bg-gray-100">
