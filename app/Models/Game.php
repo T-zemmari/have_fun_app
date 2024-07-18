@@ -17,6 +17,7 @@ class Game extends Model
      */
     protected $fillable = [
         'name',
+        'description',
         'route_name',
         'url_img',
         'active',

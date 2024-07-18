@@ -64,7 +64,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/lista_de_juegos/anyadir', [AdminController::class, 'addGame'])->name('admin.add-game');
     Route::get('/dashboard/usuario', [AdminController::class, 'getUsers'])->name('admin.users');
     Route::get('/dashboard/permisos', [AdminController::class, 'getPermises'])->name('admin.permises');
-    
+    Route::post('/dashboard/new_game', [AdminController::class, 'storeGame'])->name('new_game');
+    Route::post('/dashboard/change-img-game', [AdminController::class, 'changeImgGame'])->name('change-img-game');
+    Route::delete('/dashboard/games/{id}', [AdminController::class, 'deleteGame'])->name('delete-game');
+
 });
 
 
