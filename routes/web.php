@@ -57,6 +57,11 @@ Route::get('/juegos/treasure_hunt', function () {
 })->name('treasure_hunt');
 
 
+Route::get('/juegos/adventure_one', function () {
+    return view('juegos.adventure_one');
+})->name('adventure_one');
+
+
 Route::get('/juegos', [GameController::class, 'getGames'])->name('coleccion');
 Route::post('/contact', [ContactController::class, 'sendMail'])->name('contact.send');
 

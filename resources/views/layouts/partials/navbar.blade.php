@@ -1,4 +1,4 @@
-<nav class="w-full h-14 bg-gradient-to-r from-violet-500 to-fuchsia-500 fixed">
+<nav class="w-full h-14 bg-gradient-to-r from-violet-500 to-fuchsia-500 fixed" style="z-index:100000000000000000">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="{{ route('landing') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
             <img src="{{ asset('/assets/logos/logo_1.png') }}" class="h-8" alt="scrapbook com Logo" />
