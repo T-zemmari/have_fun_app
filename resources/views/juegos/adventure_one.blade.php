@@ -74,120 +74,125 @@
         }
 
         function create() {
-            // Fondo del juego (crea un tile sprite para que se repita)
-            background = this.add.tileSprite(0, 0, 800, 600, 'background').setOrigin(0, 0).setScrollFactor(0);
+    // Fondo del juego (crea un tile sprite para que se repita)
+    background = this.add.tileSprite(0, 0, 800, 600, 'background').setOrigin(0, 0).setScrollFactor(0);
 
-            // Crear un mundo más ancho que la pantalla
-            this.cameras.main.setBounds(0, 0, 1600, 600);
-            this.physics.world.setBounds(0, 0, 1600, 600);
+    // Crear un mundo más ancho que la pantalla
+    this.cameras.main.setBounds(0, 0, 1600, 600);
+    this.physics.world.setBounds(0, 0, 1600, 600);
 
-            // Suelo
-            groundLayer = this.physics.add.staticGroup();
-            groundLayer.create(400, 568, 'ground').setScale(2).refreshBody();
-            groundLayer.create(1200, 568, 'ground').setScale(2).refreshBody();
+    // Suelo
+    groundLayer = this.physics.add.staticGroup();
+    // Asegurarse de que el suelo se extienda más allá de los límites visibles
+    for (let i = 0; i <= 1600; i += 64) {
+        groundLayer.create(i, 568, 'ground').setScale(2).refreshBody();
+    }
 
-            // Jugador
-            player = this.physics.add.sprite(100, 450, 'dude');
-            player.setBounce(0.2);
-            player.setCollideWorldBounds(true);
+    // Jugador
+    player = this.physics.add.sprite(100, 450, 'dude');
+    player.setBounce(0.2);
+    player.setCollideWorldBounds(true);
 
-            this.anims.create({
-                key: 'left',
-                frames: this.anims.generateFrameNumbers('dude', {
-                    start: 0,
-                    end: 3
-                }),
-                frameRate: 10,
-                repeat: -1
-            });
+    this.anims.create({
+        key: 'left',
+        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        frameRate: 10,
+        repeat: -1
+    });
 
-            this.anims.create({
-                key: 'turn',
-                frames: [{
-                    key: 'dude',
-                    frame: 4
-                }],
-                frameRate: 20
-            });
+    this.anims.create({
+        key: 'turn',
+        frames: [{ key: 'dude', frame: 4 }],
+        frameRate: 20
+    });
 
-            this.anims.create({
-                key: 'right',
-                frames: this.anims.generateFrameNumbers('dude', {
-                    start: 5,
-                    end: 8
-                }),
-                frameRate: 10,
-                repeat: -1
-            });
+    this.anims.create({
+        key: 'right',
+        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frameRate: 10,
+        repeat: -1
+    });
 
-            this.physics.add.collider(player, groundLayer);
+    this.physics.add.collider(player, groundLayer);
 
-            cursors = this.input.keyboard.createCursorKeys();
+    cursors = this.input.keyboard.createCursorKeys();
 
-            // Generar posiciones válidas para las nubes
-            let minDistanceX = 300; // Distancia mínima en X
-            let minDistanceY = 50; // Distancia mínima en Y
-            let positions = [];
+    // Generar posiciones válidas para las nubes
+    let minDistanceX = 300; // Distancia mínima en X
+    let minDistanceY = 50;  // Distancia mínima en Y
+    let minY = 200;         // Altura mínima de la nube desde el suelo
+    let maxY = 368;         // Altura máxima de la nube desde el suelo
+    let positions = [];
 
-            // Crear una cuadrícula de posiciones válidas
-            for (let x = 0; x <= 1600; x += minDistanceX) {
-                for (let y = 100; y <= 300; y += minDistanceY) {
-                    positions.push({
-                        x,
-                        y
-                    });
-                }
-            }
-
-            // Barajar las posiciones
-            Phaser.Utils.Array.Shuffle(positions);
-
-            // Crear las nubes usando posiciones pre-calculadas
-            clouds = this.add.group();
-
-            for (let i = 0; i < 10; i++) {
-                let randomIndex = Phaser.Math.Between(0, array_nubes.length - 1);
-                let pos = positions[i]; // Seleccionar una posición pre-calculada
-
-                if (pos) {
-                    let cloud = this.add.image(pos.x, pos.y, 'nube_' + randomIndex);
-                    cloud.setScrollFactor(0);
-                    clouds.add(cloud);
-                }
-            }
-
-            // Hacer que la cámara siga al jugador
-            this.cameras.main.startFollow(player);
-            this.cameras.main.setDeadzone(this.scale.width * 1.5, this.scale.height);
+    // Crear una cuadrícula de posiciones válidas
+    for (let x = 0; x <= 1600; x += minDistanceX) {
+        for (let y = minY; y <= maxY; y += minDistanceY) {
+            positions.push({ x, y });
         }
+    }
 
+    // Barajar las posiciones
+    Phaser.Utils.Array.Shuffle(positions);
 
-        function update() {
-            if (cursors.left.isDown) {
-                player.setVelocityX(-160);
-                player.anims.play('left', true);
-            } else if (cursors.right.isDown) {
-                player.setVelocityX(160);
-                player.anims.play('right', true);
-            } else {
-                player.setVelocityX(0);
-                player.anims.play('turn');
-            }
+    // Crear las nubes usando posiciones pre-calculadas
+    clouds = this.add.group();
 
-            if (cursors.up.isDown && player.body.touching.down) {
-                player.setVelocityY(-330);
-            }
+    for (let i = 0; i < 10; i++) {
+        let randomIndex = Phaser.Math.Between(0, array_nubes.length - 1);
+        let pos = positions[i]; // Seleccionar una posición pre-calculada
 
-            // Mover el fondo para que siga al jugador y se repita
-            background.tilePositionX = this.cameras.main.scrollX * 0.5;
+        if (pos) {
+            let cloud = this.add.image(pos.x, pos.y, 'nube_' + randomIndex);
+            cloud.setScrollFactor(0);
+            clouds.add(cloud);
+        }
+    }
 
-            // Mover las nubes lentamente
-            clouds.children.iterate(function(child) {
-                child.x += 0.5;
-                if (child.x > 1600) {
-                    child.x = -child.width;
-                }
-            });
+    // Hacer que la cámara siga al jugador
+    this.cameras.main.startFollow(player, true, 0.08, 0.08); // Agregar parámetros de suavizado
+    this.cameras.main.setDeadzone(this.scale.width / 4, this.scale.height / 4); // Ajustar el deadzone si es necesario
+}
+
+function update() {
+    // Control de movimientos del jugador
+    if (cursors.left.isDown) {
+        player.setVelocityX(-160);
+        player.anims.play('left', true);
+    } else if (cursors.right.isDown) {
+        player.setVelocityX(160);
+        player.anims.play('right', true);
+    } else {
+        player.setVelocityX(0);
+        player.anims.play('turn');
+    }
+
+    if (cursors.up.isDown && player.body.touching.down) {
+        player.setVelocityY(-330);
+    }
+
+    // Mover el fondo para que siga al jugador y se repita
+    background.tilePositionX = this.cameras.main.scrollX * 0.5;
+
+    // Mover las nubes lentamente
+    clouds.children.iterate(function(child) {
+        child.x += 0.5;
+        if (child.x > 1600) {
+            child.x = -child.width;
         }
     });
+
+    // Asegurarse de que el jugador no caiga a través del suelo
+    let playerY = player.y;
+    let groundY = 568; // La posición Y del suelo
+
+    if (playerY > groundY) {
+        player.setY(groundY - player.height / 2);
+    }
+}
+
+
+
+    });
+</script>
+
 </script>
