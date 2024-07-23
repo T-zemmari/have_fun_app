@@ -56,4 +56,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserProfile::class);
     }
+
+    /**
+     * Get the userGameLevels associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function userGameLevels()
+    {
+        return $this->hasMany(UserGameLevel::class);
+    }
 }

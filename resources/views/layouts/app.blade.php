@@ -24,6 +24,7 @@
         @include('layouts.partials.footer')
     </div>
     <script src="{{ asset('/assets/js/jquery_3_7_1.js') }}"></script>
+    <script src="{{ asset('/assets/js/axios.js') }}"></script>
     <script src="{{ asset('/assets/js/swt.js') }}"></script>
     <script src="{{ asset('/assets/js/doc_scripts.js') }}"></script>
     <script src="{{ asset('/assets/js/funciones_varias.js') }}"></script>

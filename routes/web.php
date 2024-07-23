@@ -20,46 +20,7 @@ Route::get('/contacto', function () {
     return view('emails.contact');
 })->name('contact');
 
-Route::get('/juegos/tetris_one', function () {
-    return view('juegos.tetris-one');
-})->name('tetris_one');
 
-Route::get('/juegos/sudoku', function () {
-    return view('juegos.sudoku');
-})->name('sudoku_one');
-
-Route::get('/juegos/memo_1', function () {
-    return view('juegos.memo_1');
-})->name('memo_1');
-
-Route::get('/juegos/ajedrez', function () {
-    return view('juegos.ajedrez');
-})->name('ajedrez');
-
-Route::get('/juegos/damas', function () {
-    return view('juegos.damas');
-})->name('damas');
-
-Route::get('/juegos/demo_physer', function () {
-    return view('juegos.demo_physer');
-})->name('demo_physer');
-
-Route::get('/juegos/bullet_game', function () {
-    return view('juegos.bullet_game');
-})->name('bullet_game');
-
-Route::get('/juegos/space_war', function () {
-    return view('juegos.space_war');
-})->name('space_war');
-
-Route::get('/juegos/treasure_hunt', function () {
-    return view('juegos.treasure_hunt');
-})->name('treasure_hunt');
-
-
-Route::get('/juegos/adventure_one', function () {
-    return view('juegos.adventure_one');
-})->name('adventure_one');
 
 
 Route::get('/juegos', [GameController::class, 'getGames'])->name('coleccion');
@@ -68,6 +29,20 @@ Route::post('/contact', [ContactController::class, 'sendMail'])->name('contact.s
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+
+Route::prefix('juegos')->group(function () {
+    Route::get('/tetris_one', [GameController::class, 'tetrisOne'])->name('tetris_one');
+    Route::get('/sudoku', [GameController::class, 'sudoku'])->name('sudoku_one');
+    Route::get('/memo_1', [GameController::class, 'memo1'])->name('memo_1');
+    Route::get('/ajedrez', [GameController::class, 'ajedrez'])->name('ajedrez');
+    Route::get('/damas', [GameController::class, 'damas'])->name('damas');
+    Route::get('/demo_physer', [GameController::class, 'demoPhyser'])->name('demo_physer');
+    Route::get('/bullet_game', [GameController::class, 'bulletGame'])->name('bullet_game');
+    Route::get('/space_war', [GameController::class, 'spaceWar'])->name('space_war');
+    Route::get('/treasure_hunt', [GameController::class, 'treasureHunt'])->name('treasure_hunt');
+    Route::get('/adventure_one', [GameController::class, 'adventureOne'])->name('adventure_one');
+});
 
 
 
@@ -81,11 +56,13 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/dashboard/new_game', [AdminController::class, 'storeGame'])->name('new_game');
     Route::post('/dashboard/change-img-game/{id}', [AdminController::class, 'changeImgGame'])->name('change-img-game');
+    Route::post('/dashboard/save-level-score/', [AdminController::class, 'saveLevelAndScore'])->name('save-level-score');
 
 
     Route::patch('/dashboard/games/modificar-estado/{id}', [AdminController::class, 'updateActive'])->name('update-active');
     Route::patch('/dashboard/games/modificar-show-in-web/{id}', [AdminController::class, 'updateShowInWeb'])->name('update-show-in-web');
     Route::patch('/dashboard/games/modificar-free-or-paid/{id}', [AdminController::class, 'updateFreeOrPaid'])->name('update-free-or-paid');
+    Route::patch('/dashboard/edit-level-score/', [AdminController::class, 'editLevelAndScore'])->name('edit-level-score');
 
     Route::delete('/dashboard/games/{id}', [AdminController::class, 'deleteGame'])->name('delete-game');
     Route::delete('/dashboard/users/delete/{id}', [AdminController::class, 'deleteUser'])->name('delete-user');

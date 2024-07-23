@@ -13,6 +13,17 @@ class UserGameLevel extends Model
         'user_id',
         'game_id',
         'level',
-        'level',
+        'score',
     ];
+
+
+    /**
+     * Get the user that owns the UserGameLevel
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

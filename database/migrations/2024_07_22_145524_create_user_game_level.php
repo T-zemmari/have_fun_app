@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('user_game_level', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
-            $table->string('game_id');
-            $table->integer('level')->nullable();
-            $table->integer('score')->nullable();
+            $table->integer('game_id'); 
+            $table->integer('level');
+            $table->integer('score');
             $table->timestamps();
         });
     }

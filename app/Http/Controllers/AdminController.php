@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Game;
 use App\Models\User;
+use App\Models\UserGameLevel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -211,5 +212,24 @@ class AdminController extends Controller
     public function getPermises()
     {
         return view('admin.permises');
+    }
+
+
+    public function saveLevelAndScore(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user) {
+            $gameLevelScore = new UserGameLevel();
+            $gameLevelScore->user_id = $request->input('user_id');
+            $gameLevelScore->user_id = $request->input('game_id');
+            $gameLevelScore->level = $request->input('level');
+            $gameLevelScore->score = $request->input('score');
+            $gameLevelScore->save();
+
+            return response()->json(['message' => 'Nivel + Score guardados correctamente']);
+        }
+
+        return response()->json(['message' => 'El usuario de no esta logeado'], 401);
     }
 }

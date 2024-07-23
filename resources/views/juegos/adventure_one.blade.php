@@ -21,6 +21,13 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         let levelCompleted = false;
+        let userId = "{{ $user_id }}";
+        let gameId = "{{ $gameId }}";
+        let gameUserLevelScoreId = "{{ $gameUserLevelScoreId }}";
+
+        console.log('user_id',userId);
+        console.log('gameId',gameId);
+        console.log('gameUserLevelScoreId',gameUserLevelScoreId);
 
         let background_img = "{{ asset('assets/imgs/adventure_one/sky.png') }}";
         let ground = "{{ asset('assets/imgs/adventure_one/background_2.png') }}";
@@ -87,145 +94,145 @@
         }
 
         function create() {
-    background = this.add.tileSprite(0, 0, config.width, config.height, 'background').setOrigin(0, 0)
-        .setScrollFactor(0);
-    this.cameras.main.setBounds(0, 0, levelWidth, config.height);
-    this.physics.world.setBounds(0, 0, levelWidth, config.height);
+            background = this.add.tileSprite(0, 0, config.width, config.height, 'background').setOrigin(0, 0)
+                .setScrollFactor(0);
+            this.cameras.main.setBounds(0, 0, levelWidth, config.height);
+            this.physics.world.setBounds(0, 0, levelWidth, config.height);
 
-    groundLayer = this.physics.add.staticGroup();
-    for (let i = 0; i <= levelWidth; i += 64) {
-        groundLayer.create(i, 568, 'ground').setScale(2).refreshBody();
-    }
+            groundLayer = this.physics.add.staticGroup();
+            for (let i = 0; i <= levelWidth; i += 64) {
+                groundLayer.create(i, 568, 'ground').setScale(2).refreshBody();
+            }
 
-    player = this.physics.add.sprite(100, 450, 'dude');
-    player.setBounce(0.2);
-    player.setCollideWorldBounds(true);
+            player = this.physics.add.sprite(100, 450, 'dude');
+            player.setBounce(0.2);
+            player.setCollideWorldBounds(true);
 
-    this.anims.create({
-        key: 'left',
-        frames: this.anims.generateFrameNumbers('dude', {
-            start: 0,
-            end: 3
-        }),
-        frameRate: 10,
-        repeat: -1
-    });
-
-    this.anims.create({
-        key: 'turn',
-        frames: [{
-            key: 'dude',
-            frame: 4
-        }],
-        frameRate: 20
-    });
-
-    this.anims.create({
-        key: 'right',
-        frames: this.anims.generateFrameNumbers('dude', {
-            start: 5,
-            end: 8
-        }),
-        frameRate: 10,
-        repeat: -1
-    });
-
-    this.physics.add.collider(player, groundLayer);
-
-    cursors = this.input.keyboard.createCursorKeys();
-
-    // Añadir estrellas
-    stars = this.physics.add.group({
-        key: 'star',
-        repeat: 11,
-        setXY: {
-            x: 12,
-            y: 0,
-            stepX: 70
-        }
-    });
-
-    stars.children.iterate(child => {
-        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-    });
-
-    this.physics.add.collider(stars, groundLayer);
-    this.physics.add.overlap(player, stars, collectStar, null, this);
-
-    // Inicializar trampas
-    traps = this.physics.add.group();
-    // Inicializar bombas
-    bombs = this.physics.add.group();
-    // Configurar el nivel
-    configureLevel.call(this, currentLevel);
-
-    this.physics.add.collider(bombs, groundLayer);
-    this.physics.add.collider(player, bombs, hitBomb, null, this);
-
-    // Añadir trampas
-    this.physics.add.collider(player, traps, hitTrap, null, this);
-
-    let minDistanceX = 200;
-    let minDistanceY = 50;
-    let minY = 50;
-    let maxY = 158;
-    let positions = [];
-
-    for (let x = 0; x <= levelWidth; x += minDistanceX) {
-        for (let y = minY; y <= maxY; y += minDistanceY) {
-            positions.push({
-                x,
-                y
+            this.anims.create({
+                key: 'left',
+                frames: this.anims.generateFrameNumbers('dude', {
+                    start: 0,
+                    end: 3
+                }),
+                frameRate: 10,
+                repeat: -1
             });
+
+            this.anims.create({
+                key: 'turn',
+                frames: [{
+                    key: 'dude',
+                    frame: 4
+                }],
+                frameRate: 20
+            });
+
+            this.anims.create({
+                key: 'right',
+                frames: this.anims.generateFrameNumbers('dude', {
+                    start: 5,
+                    end: 8
+                }),
+                frameRate: 10,
+                repeat: -1
+            });
+
+            this.physics.add.collider(player, groundLayer);
+
+            cursors = this.input.keyboard.createCursorKeys();
+
+            // Añadir estrellas
+            stars = this.physics.add.group({
+                key: 'star',
+                repeat: 11,
+                setXY: {
+                    x: 12,
+                    y: 0,
+                    stepX: 70
+                }
+            });
+
+            stars.children.iterate(child => {
+                child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+            });
+
+            this.physics.add.collider(stars, groundLayer);
+            this.physics.add.overlap(player, stars, collectStar, null, this);
+
+            // Inicializar trampas
+            traps = this.physics.add.group();
+            // Inicializar bombas
+            bombs = this.physics.add.group();
+            // Configurar el nivel
+            configureLevel.call(this, currentLevel);
+
+            this.physics.add.collider(bombs, groundLayer);
+            this.physics.add.collider(player, bombs, hitBomb, null, this);
+
+            // Añadir trampas
+            this.physics.add.collider(player, traps, hitTrap, null, this);
+
+            let minDistanceX = 200;
+            let minDistanceY = 50;
+            let minY = 50;
+            let maxY = 158;
+            let positions = [];
+
+            for (let x = 0; x <= levelWidth; x += minDistanceX) {
+                for (let y = minY; y <= maxY; y += minDistanceY) {
+                    positions.push({
+                        x,
+                        y
+                    });
+                }
+            }
+
+            Phaser.Utils.Array.Shuffle(positions);
+
+            clouds = this.add.group();
+
+            for (let i = 0; i < 10; i++) {
+                let randomIndex = Phaser.Math.Between(0, array_nubes.length - 1);
+                let pos = positions[i];
+                if (pos) {
+                    let cloud = this.add.image(pos.x, pos.y, 'nube_' + randomIndex);
+                    cloud.setScrollFactor(0);
+                    clouds.add(cloud);
+                }
+            }
+
+            this.cameras.main.startFollow(player, true, 0.08, 0.08);
+            this.cameras.main.setDeadzone(this.scale.width / 4, this.scale.height / 4);
+
+            // Mostrar puntaje
+            scoreText = this.add.text(16, 16, 'Score: ' + score, {
+                fontSize: '32px',
+                fill: '#000'
+            }).setScrollFactor(0);
         }
-    }
 
-    Phaser.Utils.Array.Shuffle(positions);
+        function configureLevel(level) {
+            let bombDelay = 2000 - (level - 1) * 100; // Aumentar la velocidad de las bombas con el nivel
+            let trapCount = Math.min(level, 5); // Máximo 5 trampas
 
-    clouds = this.add.group();
+            // Ajustar dificultad de las bombas
+            this.time.addEvent({
+                delay: Math.max(bombDelay, 500), // Delay mínimo de 500 ms para bombas
+                callback: dropBomb,
+                callbackScope: this,
+                loop: true
+            });
 
-    for (let i = 0; i < 10; i++) {
-        let randomIndex = Phaser.Math.Between(0, array_nubes.length - 1);
-        let pos = positions[i];
-        if (pos) {
-            let cloud = this.add.image(pos.x, pos.y, 'nube_' + randomIndex);
-            cloud.setScrollFactor(0);
-            clouds.add(cloud);
+            // Añadir trampas
+            if (traps) { // Verificar si `traps` está definido
+                traps.clear(true, true); // Limpiar trampas existentes
+                for (let i = 0; i < trapCount; i++) {
+                    let x = Phaser.Math.Between(200, levelWidth - 200);
+                    let trap = traps.create(x, 548, 'trap');
+                    trap.setImmovable(true);
+                }
+            }
         }
-    }
-
-    this.cameras.main.startFollow(player, true, 0.08, 0.08);
-    this.cameras.main.setDeadzone(this.scale.width / 4, this.scale.height / 4);
-
-    // Mostrar puntaje
-    scoreText = this.add.text(16, 16, 'Score: ' + score, {
-        fontSize: '32px',
-        fill: '#000'
-    }).setScrollFactor(0);
-}
-
-function configureLevel(level) {
-    let bombDelay = 2000 - (level - 1) * 100; // Aumentar la velocidad de las bombas con el nivel
-    let trapCount = Math.min(level, 5); // Máximo 5 trampas
-
-    // Ajustar dificultad de las bombas
-    this.time.addEvent({
-        delay: Math.max(bombDelay, 500), // Delay mínimo de 500 ms para bombas
-        callback: dropBomb,
-        callbackScope: this,
-        loop: true
-    });
-
-    // Añadir trampas
-    if (traps) { // Verificar si `traps` está definido
-        traps.clear(true, true); // Limpiar trampas existentes
-        for (let i = 0; i < trapCount; i++) {
-            let x = Phaser.Math.Between(200, levelWidth - 200);
-            let trap = traps.create(x, 548, 'trap');
-            trap.setImmovable(true);
-        }
-    }
-}
 
         function update() {
             if (cursors.left.isDown) {
@@ -264,13 +271,14 @@ function configureLevel(level) {
                         showDenyButton: true,
                         showCancelButton: false,
                         confirmButtonText: "Continuar",
-                        denyButtonText: "Cancelar"
+                        denyButtonText: "Cancelar",
+                        icon: 'question'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             if (currentLevel < 25) {
                                 localStorage.setItem('currentLevel', currentLevel + 1);
                                 window.location
-                            .reload(); // Recargar la página para cargar el siguiente nivel
+                                    .reload(); // Recargar la página para cargar el siguiente nivel
                             } else {
                                 Swal.fire({
                                     html: "<h4>¡Has completado todos los niveles!<br><br>¡Felicidades!</h4>",
