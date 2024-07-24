@@ -10,7 +10,8 @@
             <h1 class="text-3xl font-bold text-center text-gray-900 mb-4">Adventure one</h1>
             <div id="phaser-game" style="width: 800px; height: 600px;"></div>
             <button id="reset-btn" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Restablecer</button>
-            <button id="next-level-btn" class="mt-4 px-4 py-2 bg-green-500 text-white rounded" style="display: none;">Siguiente Nivel</button>
+            <button id="next-level-btn" class="mt-4 px-4 py-2 bg-green-500 text-white rounded"
+                style="display: none;">Siguiente Nivel</button>
         </div>
     </section>
 </x-guest-layout>
@@ -71,6 +72,7 @@
 
         const game = new Phaser.Game(config);
         let scoreText;
+        let levelText;
 
         let player, cursors, groundLayer, background, clouds, stars, bombs, traps;
         let levelWidth = 1000;
@@ -201,6 +203,11 @@
                 fontSize: '32px',
                 fill: '#000'
             }).setScrollFactor(0);
+
+            levelText = this.add.text(16, 60, 'Nivel: ' + currentLevel, {
+            fontSize: '32px',
+            fill: '#000'
+        }).setScrollFactor(0);
         }
 
         function configureLevel(level) {
@@ -250,6 +257,8 @@
             if (player.x > levelWidth - 100 && !levelCompleted) {
                 levelCompleted = true;
 
+                this.physics.pause(); // Stop the physics engine
+                this.input.enabled = false; // Disable user input
                 this.cameras.main.stopFollow();
                 this.cameras.main.fade(500);
                 setTimeout(() => {
@@ -284,6 +293,7 @@
             }
         }
 
+
         function collectStar(player, star) {
             star.disableBody(true, true);
 
@@ -304,7 +314,8 @@
             let levelDifficulty = currentLevel;
             bomb.setBounce(1);
             bomb.setCollideWorldBounds(true);
-            bomb.setVelocity(Phaser.Math.Between(-200, 200) * Math.min(levelDifficulty, 5), 20 + levelDifficulty * 10);
+            bomb.setVelocity(Phaser.Math.Between(-200, 200) * Math.min(levelDifficulty, 5), 20 +
+                levelDifficulty * 10);
         }
 
         function hitBomb(player, bomb) {
@@ -342,21 +353,21 @@
         function updateGameProgress(level, score) {
             if (userId) {
                 axios.patch('/dashboard/edit-level-score/', {
-                    game_id: gameId,
-                    level: level,
-                    score: score
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => {
-                    console.log('Datos sincronizados:', response.data);
-                })
-                .catch(error => {
-                    console.error('Error al sincronizar datos:', error);
-                });
+                        game_id: gameId,
+                        level: level,
+                        score: score
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => {
+                        console.log('Datos sincronizados:', response.data);
+                    })
+                    .catch(error => {
+                        console.error('Error al sincronizar datos:', error);
+                    });
             }
         }
 
