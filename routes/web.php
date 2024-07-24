@@ -62,7 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/dashboard/games/modificar-estado/{id}', [AdminController::class, 'updateActive'])->name('update-active');
     Route::patch('/dashboard/games/modificar-show-in-web/{id}', [AdminController::class, 'updateShowInWeb'])->name('update-show-in-web');
     Route::patch('/dashboard/games/modificar-free-or-paid/{id}', [AdminController::class, 'updateFreeOrPaid'])->name('update-free-or-paid');
-    Route::patch('/dashboard/edit-level-score/', [AdminController::class, 'editLevelAndScore'])->name('edit-level-score');
+    Route::patch('/dashboard/edit-level-score/', [GameController::class, 'updateGameLevelScore'])->name('edit-level-score');
 
     Route::delete('/dashboard/games/{id}', [AdminController::class, 'deleteGame'])->name('delete-game');
     Route::delete('/dashboard/users/delete/{id}', [AdminController::class, 'deleteUser'])->name('delete-user');

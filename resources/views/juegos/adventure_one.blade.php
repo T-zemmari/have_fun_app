@@ -10,24 +10,27 @@
             <h1 class="text-3xl font-bold text-center text-gray-900 mb-4">Adventure one</h1>
             <div id="phaser-game" style="width: 800px; height: 600px;"></div>
             <button id="reset-btn" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Restablecer</button>
-            <button id="next-level-btn" class="mt-4 px-4 py-2 bg-green-500 text-white rounded"
-                style="display: none;">Siguiente Nivel</button>
+            <button id="next-level-btn" class="mt-4 px-4 py-2 bg-green-500 text-white rounded" style="display: none;">Siguiente Nivel</button>
         </div>
     </section>
 </x-guest-layout>
 
 <script src="{{ asset('assets/js/phaser.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         let levelCompleted = false;
         let userId = "{{ $user_id }}";
         let gameId = "{{ $gameId }}";
-        let gameUserLevelScoreId = "{{ $gameUserLevelScoreId }}";
+        let scoreDb = parseInt("{{ $score }}") || 0;
+        let currentLevelDb = parseInt("{{ $currentLevel }}") || 1;
 
-        console.log('user_id',userId);
-        console.log('gameId',gameId);
-        console.log('gameUserLevelScoreId',gameUserLevelScoreId);
+        localStorage.setItem('currentLevel', currentLevelDb);
+        localStorage.setItem('score', scoreDb);
+
+        console.log('user_id', userId);
+        console.log('gameId', gameId);
 
         let background_img = "{{ asset('assets/imgs/adventure_one/sky.png') }}";
         let ground = "{{ asset('assets/imgs/adventure_one/background_2.png') }}";
@@ -38,16 +41,12 @@
         let trap = "{{ asset('assets/imgs/adventure_one/trap.png') }}";
 
         let nube_1 = "{{ asset('assets/imgs/adventure_one/nubes/nube_1.png') }}";
-        let nube_2 = "{{ asset('assets/imgs/adventure_one/nubes/nube_2.png') }}";
-        let nube_3 = "{{ asset('assets/imgs/adventure_one/nubes/nube_3.png') }}";
-        let nube_4 = "{{ asset('assets/imgs/adventure_one/nubes/nube_4.png') }}";
-        let nube_5 = "{{ asset('assets/imgs/adventure_one/nubes/nube_5.png') }}";
         let nube_6 = "{{ asset('assets/imgs/adventure_one/nubes/nube_6.png') }}";
 
         let array_nubes = [nube_1, nube_6];
 
-        let currentLevel = parseInt(localStorage.getItem('currentLevel')) || 1;
-        let score = parseInt(localStorage.getItem('score')) || 0;
+        currentLevel = parseInt(localStorage.getItem('currentLevel')) || 1;
+        score = parseInt(localStorage.getItem('score')) || 0;
 
         const config = {
             type: Phaser.AUTO,
@@ -141,7 +140,6 @@
 
             cursors = this.input.keyboard.createCursorKeys();
 
-            // Añadir estrellas
             stars = this.physics.add.group({
                 key: 'star',
                 repeat: 11,
@@ -159,17 +157,12 @@
             this.physics.add.collider(stars, groundLayer);
             this.physics.add.overlap(player, stars, collectStar, null, this);
 
-            // Inicializar trampas
             traps = this.physics.add.group();
-            // Inicializar bombas
             bombs = this.physics.add.group();
-            // Configurar el nivel
             configureLevel.call(this, currentLevel);
 
             this.physics.add.collider(bombs, groundLayer);
             this.physics.add.collider(player, bombs, hitBomb, null, this);
-
-            // Añadir trampas
             this.physics.add.collider(player, traps, hitTrap, null, this);
 
             let minDistanceX = 200;
@@ -204,7 +197,6 @@
             this.cameras.main.startFollow(player, true, 0.08, 0.08);
             this.cameras.main.setDeadzone(this.scale.width / 4, this.scale.height / 4);
 
-            // Mostrar puntaje
             scoreText = this.add.text(16, 16, 'Score: ' + score, {
                 fontSize: '32px',
                 fill: '#000'
@@ -212,25 +204,21 @@
         }
 
         function configureLevel(level) {
-            let bombDelay = 2000 - (level - 1) * 100; // Aumentar la velocidad de las bombas con el nivel
-            let trapCount = Math.min(level, 5); // Máximo 5 trampas
+            let bombDelay = 2000 - (level - 1) * 100;
+            let trapCount = Math.min(level, 5);
 
-            // Ajustar dificultad de las bombas
             this.time.addEvent({
-                delay: Math.max(bombDelay, 500), // Delay mínimo de 500 ms para bombas
+                delay: Math.max(bombDelay, 500),
                 callback: dropBomb,
                 callbackScope: this,
                 loop: true
             });
 
-            // Añadir trampas
-            if (traps) { // Verificar si `traps` está definido
-                traps.clear(true, true); // Limpiar trampas existentes
-                for (let i = 0; i < trapCount; i++) {
-                    let x = Phaser.Math.Between(200, levelWidth - 200);
-                    let trap = traps.create(x, 548, 'trap');
-                    trap.setImmovable(true);
-                }
+            traps.clear(true, true);
+            for (let i = 0; i < trapCount; i++) {
+                let x = Phaser.Math.Between(200, levelWidth - 200);
+                let trap = traps.create(x, 548, 'trap');
+                trap.setImmovable(true);
             }
         }
 
@@ -262,33 +250,34 @@
             if (player.x > levelWidth - 100 && !levelCompleted) {
                 levelCompleted = true;
 
-                // Fin del nivel
                 this.cameras.main.stopFollow();
                 this.cameras.main.fade(500);
                 setTimeout(() => {
                     Swal.fire({
-                        html: `<h4>¡Enhorabuena Has subido de nivel!<br><br>¿Quieres continuar al nivel ${currentLevel + 1}?</h4>`,
+                        html: `<h4>¡Enhorabuena! Has completado el nivel ${currentLevel}.<br><br>¿Quieres continuar al nivel ${currentLevel + 1}?</h4>`,
                         showDenyButton: true,
-                        showCancelButton: false,
                         confirmButtonText: "Continuar",
                         denyButtonText: "Cancelar",
                         icon: 'question'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             if (currentLevel < 25) {
+                                updateGameProgress(currentLevel + 1, score);
                                 localStorage.setItem('currentLevel', currentLevel + 1);
-                                window.location
-                                    .reload(); // Recargar la página para cargar el siguiente nivel
+                                window.location.reload();
                             } else {
                                 Swal.fire({
                                     html: "<h4>¡Has completado todos los niveles!<br><br>¡Felicidades!</h4>",
                                     confirmButtonText: "Reiniciar"
                                 }).then(() => {
+                                    updateGameProgress(1, 0);
                                     localStorage.setItem('currentLevel', 1);
                                     localStorage.setItem('score', 0);
                                     window.location.href = "/juegos/adventure_one";
                                 });
                             }
+                        } else if (result.isDenied) {
+                            window.location.href = "/juegos";
                         }
                     });
                 }, 500);
@@ -299,50 +288,23 @@
             star.disableBody(true, true);
 
             score += 10;
-            localStorage.setItem('score', score); // Guardar puntaje en localStorage
-            if (scoreText) {
-                scoreText.setText('Score: ' + score);
-            }
+            localStorage.setItem('score', score);
+            scoreText.setText('Score: ' + score);
 
             if (stars.countActive(true) === 0) {
-                // Reiniciar estrellas
                 stars.children.iterate(child => {
                     child.enableBody(true, child.x, 0, true, true);
                 });
             }
         }
 
-        function configureLevel(level) {
-            let bombDelay = 2000 - (level - 1) * 100; // Aumentar la velocidad de las bombas con el nivel
-            let trapCount = Math.min(level, 5); // Máximo 5 trampas
-
-            // Ajustar dificultad de las bombas
-            this.time.addEvent({
-                delay: Math.max(bombDelay, 500), // Delay mínimo de 500 ms para bombas
-                callback: dropBomb,
-                callbackScope: this,
-                loop: true
-            });
-
-            // Añadir trampas
-            traps.clear(true, true); // Limpiar trampas existentes
-            for (let i = 0; i < trapCount; i++) {
-                let x = Phaser.Math.Between(200, levelWidth - 200);
-                let trap = traps.create(x, 548, 'trap');
-                trap.setImmovable(true);
-            }
-        }
-
         function dropBomb() {
             let x = Phaser.Math.Between(0, levelWidth);
             let bomb = bombs.create(x, 16, 'bomb');
-
-            // Ajustar velocidad de la bomba
             let levelDifficulty = currentLevel;
             bomb.setBounce(1);
             bomb.setCollideWorldBounds(true);
-            bomb.setVelocity(Phaser.Math.Between(-200, 200) * Math.min(levelDifficulty, 5), 20 +
-                levelDifficulty * 10);
+            bomb.setVelocity(Phaser.Math.Between(-200, 200) * Math.min(levelDifficulty, 5), 20 + levelDifficulty * 10);
         }
 
         function hitBomb(player, bomb) {
@@ -351,10 +313,12 @@
             player.anims.play('turn');
             Swal.fire({
                 html: "<h4>¡Perdiste!<br><br>¿Quieres reiniciar el juego?</h4>",
-                confirmButtonText: "Reiniciar"
+                confirmButtonText: "Reiniciar",
+                icon: 'error',
             }).then(() => {
-                localStorage.setItem('currentLevel', 1);
-                localStorage.setItem('score', 0);
+                // No reset the level and score here; keep them as they are
+                //localStorage.setItem('currentLevel', currentLevel);
+                //localStorage.setItem('score', score);
                 window.location.href = "/juegos/adventure_one";
             });
         }
@@ -365,19 +329,47 @@
             player.anims.play('turn');
             Swal.fire({
                 html: "<h4>¡Has caído en una trampa!<br><br>Intenta de nuevo</h4>",
-                confirmButtonText: "Reiniciar"
+                confirmButtonText: "Reiniciar",
+                icon: 'error',
             }).then(() => {
+                // No reset the level and score here; keep them as they are
+                //localStorage.setItem('currentLevel', currentLevel);
+                //localStorage.setItem('score', score);
                 window.location.reload();
             });
         }
 
+        function updateGameProgress(level, score) {
+            if (userId) {
+                axios.patch('/dashboard/edit-level-score/', {
+                    game_id: gameId,
+                    level: level,
+                    score: score
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => {
+                    console.log('Datos sincronizados:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error al sincronizar datos:', error);
+                });
+            }
+        }
+
         document.getElementById('next-level-btn').addEventListener('click', () => {
             localStorage.setItem('currentLevel', currentLevel + 1);
-            window.location.reload(); // Recargar la página para cargar el siguiente nivel
+            updateGameProgress(currentLevel + 1, score);
+            window.location.reload();
         });
 
         document.getElementById('reset-btn').addEventListener('click', () => {
             localStorage.setItem('currentLevel', 1);
+            localStorage.setItem('score', 0);
+            updateGameProgress(1, 0);
             window.location.href = "/juegos/adventure_one";
         });
     });

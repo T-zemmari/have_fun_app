@@ -75,6 +75,8 @@ class GameController extends Controller
 
         $gameId = $game->id;
         $gameUserLevelScoreId = null;
+        $score = 0;
+        $currentLevel = 0;
 
         if (is_numeric($user_id) && is_numeric($gameId)) {
             $gameUserLevelScore = UserGameLevel::where('user_id', $user_id)
@@ -83,6 +85,10 @@ class GameController extends Controller
 
             if ($gameUserLevelScore) {
                 $gameUserLevelScoreId = $gameUserLevelScore->id;
+                $score = $gameUserLevelScore->score;
+                $currentLevel = $gameUserLevelScore->level;
+                $score = $gameUserLevelScore->score;
+                $currentLevel = $gameUserLevelScore->level;
             } else {
                 $gameUserLevelScore = new UserGameLevel();
                 $gameUserLevelScore->user_id = $user_id;
@@ -92,9 +98,42 @@ class GameController extends Controller
                 $gameUserLevelScore->save();
 
                 $gameUserLevelScoreId = $gameUserLevelScore->id;
+                $score = $gameUserLevelScore->score;
+                $currentLevel = $gameUserLevelScore->level;
             }
         }
 
-        return view('juegos.adventure_one', compact('gameId', 'user_id', 'gameUserLevelScoreId'));
+        return view('juegos.adventure_one', compact('gameId', 'user_id', 'gameUserLevelScoreId', 'score', 'currentLevel'));
+    }
+
+    public function updateGameLevelScore(Request $request)
+    {
+        $request->validate([
+            'game_id' => 'required|integer',
+            'level' => 'required|integer',
+            'score' => 'required|integer',
+        ]);
+
+        $user = Auth::user();
+        $user_id = $user ? $user->id : null;
+        $game_id = $request->input('game_id');
+        $level = $request->input('level');
+        $score = $request->input('score');
+
+        if ($user_id) {
+            $gameUserLevelScore = UserGameLevel::where('user_id', $user_id)
+                ->where('game_id', $game_id)
+                ->first();
+
+            if ($gameUserLevelScore) {
+                $gameUserLevelScore->level = $level;
+                $gameUserLevelScore->score = $score;
+                $gameUserLevelScore->save();
+
+                return response()->json(['message' => 'Datos actualizados correctamente.'], 200);
+            }
+        }
+
+        return response()->json(['message' => 'No se encontraron datos para actualizar.'], 404);
     }
 }
