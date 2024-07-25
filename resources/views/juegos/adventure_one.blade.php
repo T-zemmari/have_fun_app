@@ -40,6 +40,8 @@
         let bomb = "{{ asset('assets/imgs/adventure_one/bomb.png') }}";
         let star = "{{ asset('assets/imgs/adventure_one/star.png') }}";
         let trap = "{{ asset('assets/imgs/adventure_one/trap.png') }}";
+        let platform = "{{ asset('assets/imgs/adventure_one/platform.png') }}";
+        let bullet = "{{ asset('assets/imgs/adventure_one/bullet_3.png') }}";
 
         let nube_1 = "{{ asset('assets/imgs/adventure_one/nubes/nube_1.png') }}";
         let nube_6 = "{{ asset('assets/imgs/adventure_one/nubes/nube_6.png') }}";
@@ -74,7 +76,7 @@
         let scoreText;
         let levelText;
 
-        let player, cursors, groundLayer, background, clouds, stars, bombs, traps;
+        let player, cursors, groundLayer, background, clouds, stars, bombs, traps, platforms;
         let levelWidth = 1000;
 
         function preload() {
@@ -88,6 +90,8 @@
             this.load.image('bomb', bomb);
             this.load.image('treasure', treasure);
             this.load.image('trap', trap);
+            this.load.image('platform', platform);
+            this.load.image('bullet', bullet);
 
             array_nubes.forEach((nube, index) => {
                 this.load.image('nube_' + index, nube);
@@ -108,6 +112,9 @@
             player = this.physics.add.sprite(100, 450, 'dude');
             player.setBounce(0.2);
             player.setCollideWorldBounds(true);
+
+            platforms = this.physics.add.staticGroup();
+            this.physics.add.collider(player, groundLayer);
 
             this.anims.create({
                 key: 'left',
@@ -138,7 +145,7 @@
                 repeat: -1
             });
 
-            this.physics.add.collider(player, groundLayer);
+
 
             cursors = this.input.keyboard.createCursorKeys();
 
@@ -159,11 +166,17 @@
             this.physics.add.collider(stars, groundLayer);
             this.physics.add.overlap(player, stars, collectStar, null, this);
 
+            this.physics.add.collider(player, platforms);
+            this.physics.add.collider(stars, platforms);
+
             traps = this.physics.add.group();
             bombs = this.physics.add.group();
+
             configureLevel.call(this, currentLevel);
 
             this.physics.add.collider(bombs, groundLayer);
+            this.physics.add.collider(bombs, platforms);
+            this.physics.add.collider(traps, platforms)
             this.physics.add.collider(player, bombs, hitBomb, null, this);
             this.physics.add.collider(player, traps, hitTrap, null, this);
 
@@ -205,14 +218,15 @@
             }).setScrollFactor(0);
 
             levelText = this.add.text(16, 60, 'Nivel: ' + currentLevel, {
-            fontSize: '32px',
-            fill: '#000'
-        }).setScrollFactor(0);
+                fontSize: '32px',
+                fill: '#000'
+            }).setScrollFactor(0);
         }
 
         function configureLevel(level) {
-            let bombDelay = 2000 - (level - 1) * 100;
-            let trapCount = Math.min(level, 5);
+            let bombDelay = 1000 - (level - 1) * 100; // Bombas más rápidas con cada nivel
+            let trapCount = Math.min(level, 5); // Máximo 5 trampas
+            let platformCount = Math.min(level + 1, 3); // Máximo 3 plataformas
 
             this.time.addEvent({
                 delay: Math.max(bombDelay, 500),
@@ -222,17 +236,65 @@
             });
 
             traps.clear(true, true);
+            platforms.clear(true, true); // Limpiar plataformas existentes
+
+            // Configuración de trampas
             for (let i = 0; i < trapCount; i++) {
                 let x = Phaser.Math.Between(200, levelWidth - 200);
                 let trap = traps.create(x, 548, 'trap');
                 trap.setImmovable(true);
+
+                // Ajustar la posición vertical de la trampa para que esté en el suelo o en una plataforma
+                this.physics.add.collider(trap, groundLayer);
+                this.physics.add.collider(trap, platforms);
             }
+
+            // Configuración de plataformas
+            let platformPositions = []; // Array para almacenar las posiciones de las plataformas
+            let candidatePositions = [];
+
+            // Generar posiciones candidatas
+            for (let i = 0; i < platformCount * 2; i++) { // Generar el doble de posiciones necesarias
+                let x = Phaser.Math.Between(100, levelWidth - 100);
+                let y = Phaser.Math.Between(150, 400);
+                candidatePositions.push({
+                    x,
+                    y
+                });
+            }
+
+            // Filtrar posiciones válidas
+            candidatePositions.forEach(pos => {
+                let isPositionValid = platformPositions.every(existingPos => {
+                    let distanceX = Math.abs(pos.x - existingPos.x);
+                    let distanceY = Math.abs(pos.y - existingPos.y);
+                    return distanceX >= 100 && distanceY >= 150;
+                });
+
+                if (isPositionValid) {
+                    platformPositions.push(pos);
+                }
+
+                // Parar si ya hemos colocado suficientes plataformas
+                if (platformPositions.length >= platformCount) return;
+            });
+
+            // Crear plataformas
+            platformPositions.forEach(pos => {
+                let platform = platforms.create(pos.x, pos.y, 'platform');
+                platform.setImmovable(true);
+            });
         }
+
+
+        let minX = 0;
 
         function update() {
             if (cursors.left.isDown) {
-                player.setVelocityX(-160);
-                player.anims.play('left', true);
+                if (player.x > minX) {
+                    player.setVelocityX(-160);
+                    player.anims.play('left', true);
+                }
             } else if (cursors.right.isDown) {
                 player.setVelocityX(160);
                 player.anims.play('right', true);
@@ -241,10 +303,9 @@
                 player.anims.play('turn');
             }
 
-            if (cursors.up.isDown && player.body.touching.down) {
+            if (cursors.up.isDown && (player.body.touching.down || player.body.touching.platform)) {
                 player.setVelocityY(-330);
             }
-
             background.tilePositionX = this.cameras.main.scrollX * 0.5;
 
             clouds.children.iterate(child => {
@@ -254,11 +315,13 @@
                 }
             });
 
+            minX = Math.max(minX, player.x - 400);
+
             if (player.x > levelWidth - 100 && !levelCompleted) {
                 levelCompleted = true;
 
-                this.physics.pause(); // Stop the physics engine
-                this.input.enabled = false; // Disable user input
+                this.physics.pause();
+                this.input.enabled = false;
                 this.cameras.main.stopFollow();
                 this.cameras.main.fade(500);
                 setTimeout(() => {
@@ -310,7 +373,7 @@
 
         function dropBomb() {
             let x = Phaser.Math.Between(0, levelWidth);
-            let bomb = bombs.create(x, 16, 'bomb');
+            let bomb = bombs.create(x, 6, 'bomb');
             let levelDifficulty = currentLevel;
             bomb.setBounce(1);
             bomb.setCollideWorldBounds(true);
@@ -327,7 +390,6 @@
                 confirmButtonText: "Reiniciar",
                 icon: 'error',
             }).then(() => {
-                // No reset the level and score here; keep them as they are
                 //localStorage.setItem('currentLevel', currentLevel);
                 //localStorage.setItem('score', score);
                 window.location.href = "/juegos/adventure_one";
@@ -343,7 +405,6 @@
                 confirmButtonText: "Reiniciar",
                 icon: 'error',
             }).then(() => {
-                // No reset the level and score here; keep them as they are
                 //localStorage.setItem('currentLevel', currentLevel);
                 //localStorage.setItem('score', score);
                 window.location.reload();
@@ -380,7 +441,7 @@
         document.getElementById('reset-btn').addEventListener('click', () => {
             localStorage.setItem('currentLevel', 1);
             localStorage.setItem('score', 0);
-            updateGameProgress(1, 0);
+            updateGameProgress(scoreDb, currentLevelDb);
             window.location.href = "/juegos/adventure_one";
         });
     });
