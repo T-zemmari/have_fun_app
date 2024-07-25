@@ -1,3 +1,24 @@
+<x-guest-layout>
+    @section('title', 'Adventure one')
+    @include('layouts.partials.navbar')
+
+    <section class="w-full h-screen flex flex-col justify-center items-center bg-gray-100 mt-[20px]">
+        <div class="w-[100%] max-w-4xl flex justify-start items-center mt-10">
+            @include('layouts.partials.menu_nav')
+        </div>
+        <div class="w-full max-w-4xl p-8 bg-white shadow-lg rounded-lg mb-8">
+            <h1 class="text-3xl font-bold text-center text-gray-900 mb-4">Adventure one</h1>
+            <div id="phaser-game" style="width: 800px; height: 600px;"></div>
+            <button id="reset-btn" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Restablecer</button>
+            <button id="next-level-btn" class="mt-4 px-4 py-2 bg-green-500 text-white rounded"
+                style="display: none;">Siguiente Nivel</button>
+        </div>
+    </section>
+</x-guest-layout>
+
+<script src="{{ asset('assets/js/phaser.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         let levelCompleted = false;
@@ -37,12 +58,18 @@
             physics: {
                 default: 'arcade',
                 arcade: {
-                    gravity: { y: 300 },
+                    gravity: {
+                        y: 300
+                    },
                     debug: false
                 }
             },
             parent: 'phaser-game',
-            scene: { preload, create, update }
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
         };
 
         const game = new Phaser.Game(config);
@@ -56,7 +83,10 @@
         function preload() {
             this.load.image('background', background_img);
             this.load.image('ground', ground);
-            this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
+            this.load.spritesheet('dude', dude, {
+                frameWidth: 32,
+                frameHeight: 48
+            });
             this.load.image('star', star);
             this.load.image('bomb', bomb);
             this.load.image('treasure', treasure);
@@ -70,7 +100,8 @@
         }
 
         function create() {
-            background = this.add.tileSprite(0, 0, config.width, config.height, 'background').setOrigin(0, 0).setScrollFactor(0);
+            background = this.add.tileSprite(0, 0, config.width, config.height, 'background').setOrigin(0, 0)
+                .setScrollFactor(0);
             this.cameras.main.setBounds(0, 0, levelWidth, config.height);
             this.physics.world.setBounds(0, 0, levelWidth, config.height);
 
@@ -84,19 +115,67 @@
             player.setCollideWorldBounds(true);
 
             platforms = this.physics.add.staticGroup();
-            bullets = this.physics.add.group({ defaultKey: 'bullet', maxSize: 10 });
+
+
+            bullets = this.physics.add.group({
+                defaultKey: 'bullet',
+                maxSize: 10
+            });
+
+
             this.input.keyboard.on('keydown-SPACE', shootBullet, this);
 
-            this.anims.create({ key: 'left', frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }), frameRate: 10, repeat: -1 });
-            this.anims.create({ key: 'turn', frames: [{ key: 'dude', frame: 4 }], frameRate: 20 });
-            this.anims.create({ key: 'right', frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }), frameRate: 10, repeat: -1 });
+            this.anims.create({
+                key: 'left',
+                frames: this.anims.generateFrameNumbers('dude', {
+                    start: 0,
+                    end: 3
+                }),
+                frameRate: 10,
+                repeat: -1
+            });
+
+            this.anims.create({
+                key: 'turn',
+                frames: [{
+                    key: 'dude',
+                    frame: 4
+                }],
+                frameRate: 20
+            });
+
+            this.anims.create({
+                key: 'right',
+                frames: this.anims.generateFrameNumbers('dude', {
+                    start: 5,
+                    end: 8
+                }),
+                frameRate: 10,
+                repeat: -1
+            });
+
+
 
             cursors = this.input.keyboard.createCursorKeys();
 
-            stars = this.physics.add.group({ key: 'star', repeat: 11, setXY: { x: 12, y: 0, stepX: 70 } });
-            stars.children.iterate(child => child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8)));
+            stars = this.physics.add.group({
+                key: 'star',
+                repeat: 11,
+                setXY: {
+                    x: 12,
+                    y: 0,
+                    stepX: 70
+                }
+            });
+
+            stars.children.iterate(child => {
+                child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+            });
+
 
             this.physics.add.overlap(player, stars, collectStar, null, this);
+
+
 
             traps = this.physics.add.group();
             bombs = this.physics.add.group();
@@ -110,7 +189,7 @@
             this.physics.add.collider(bullets, bombs, destroyBomb, null, this);
             this.physics.add.collider(bombs, groundLayer);
             this.physics.add.collider(bombs, platforms);
-            this.physics.add.collider(traps, platforms);
+            this.physics.add.collider(traps, platforms)
             this.physics.add.collider(player, bombs, hitBomb, null, this);
             this.physics.add.collider(player, traps, hitTrap, null, this);
 
@@ -122,7 +201,10 @@
 
             for (let x = 0; x <= levelWidth; x += minDistanceX) {
                 for (let y = minY; y <= maxY; y += minDistanceY) {
-                    positions.push({ x, y });
+                    positions.push({
+                        x,
+                        y
+                    });
                 }
             }
 
@@ -143,8 +225,15 @@
             this.cameras.main.startFollow(player, true, 0.08, 0.08);
             this.cameras.main.setDeadzone(this.scale.width / 4, this.scale.height / 4);
 
-            scoreText = this.add.text(16, 16, 'Score: ' + score, { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
-            levelText = this.add.text(16, 60, 'Nivel: ' + currentLevel, { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
+            scoreText = this.add.text(16, 16, 'Score: ' + score, {
+                fontSize: '32px',
+                fill: '#000'
+            }).setScrollFactor(0);
+
+            levelText = this.add.text(16, 60, 'Nivel: ' + currentLevel, {
+                fontSize: '32px',
+                fill: '#000'
+            }).setScrollFactor(0);
         }
 
         let bombsCount = 0; // Contador de bombas actuales
@@ -152,10 +241,10 @@
         let bombsLimitReached = false; // Bandera para saber si se alcanzó el límite de bombas
 
         function configureLevel(level) {
+
             bombsCount = 0; // Reinicia el contador de bombas al configurar un nuevo nivel
             bombsLimitReached = false; // Reinicia la bandera para saber si se alcanzó el límite
 
-            maxBombs = 5 + (level - 1) * 2; // Aumenta el número máximo de bombas por nivel
             let trapCount = Math.min(level, 5); // Máximo 5 trampas
             let platformCount = Math.min(level + 1, 3); // Máximo 3 plataformas
 
@@ -185,81 +274,63 @@
             }
 
             // Configuración de plataformas
-            for (let i = 0; i < platformCount; i++) {
-                let x = Phaser.Math.Between(200, levelWidth - 200);
-                let platform = platforms.create(x, Phaser.Math.Between(200, 400), 'platform');
+            let platformPositions = []; // Array para almacenar las posiciones de las plataformas
+            let candidatePositions = [];
+
+            // Generar posiciones candidatas
+            for (let i = 0; i < platformCount * 2; i++) { // Generar el doble de posiciones necesarias
+                let x = Phaser.Math.Between(100, levelWidth - 100);
+                let y = Phaser.Math.Between(150, 400);
+                candidatePositions.push({
+                    x,
+                    y
+                });
+            }
+
+            // Filtrar posiciones válidas
+            candidatePositions.forEach(pos => {
+                let isPositionValid = platformPositions.every(existingPos => {
+                    let distanceX = Math.abs(pos.x - existingPos.x);
+                    let distanceY = Math.abs(pos.y - existingPos.y);
+                    return distanceX >= 100 && distanceY >= 150;
+                });
+
+                if (isPositionValid) {
+                    platformPositions.push(pos);
+                }
+
+                // Parar si ya hemos colocado suficientes plataformas
+                if (platformPositions.length >= platformCount) return;
+            });
+
+            // Crear plataformas
+            platformPositions.forEach(pos => {
+                let platform = platforms.create(pos.x, pos.y, 'platform');
                 platform.setImmovable(true);
-
-                this.physics.add.collider(platform, groundLayer);
-            }
-        }
-
-        function dropBomb() {
-            if (bombsCount >= maxBombs) {
-                bombsLimitReached = true; // No permitir más bombas
-                return;
-            }
-
-            let x = Phaser.Math.Between(200, levelWidth - 200);
-            let bomb = bombs.create(x, -50, 'bomb');
-            bomb.setBounce(1);
-            bomb.setCollideWorldBounds(true);
-            bomb.setGravityY(Phaser.Math.Between(100, 300));
-
-            bombsCount++;
+            });
         }
 
         function shootBullet() {
-            if (game.time.now - lastFired < 300) {
-                return;
-            }
-
-            lastFired = game.time.now;
-
-            let bullet = bullets.get(player.x + 50, player.y - 20);
-
-            if (bullet) {
-                bullet.setActive(true);
-                bullet.setVisible(true);
-                bullet.setVelocityX(600);
-            }
-        }
-
-        function collectStar(player, star) {
-            star.disableBody(true, true);
-            score += 10;
-            scoreText.setText('Score: ' + score);
-        }
-
-        function hitBomb(player, bomb) {
-            this.physics.pause();
-            player.setTint(0xff0000);
-            player.anims.play('turn');
-            gameOver = true;
-        }
-
-        function hitTrap(player, trap) {
-            this.physics.pause();
-            player.setTint(0xff0000);
-            player.anims.play('turn');
-            gameOver = true;
+            let bullet = bullets.create(player.x, player.y, 'bullet'); // Crea una nueva bala
+            bullet.setActive(true);
+            bullet.setVisible(true);
+            bullet.setVelocityY(-400); // La bala se mueve hacia arriba
+            bullet.body.allowGravity = false; // Evita que las balas sean afectadas por la gravedad
         }
 
         function destroyBomb(bullet, bomb) {
-            bomb.setAlpha(0);
-            bullet.setAlpha(0);
-            bombsCount--;
-            if (bombsCount < maxBombs) {
-                bombsLimitReached = false; // Permitir más bombas si se han destruido algunas
-            }
+            bullet.destroy(); // Asegúrate de destruir la bala
+            bomb.destroy(); // Asegúrate de destruir la bomba
         }
 
-        function update() {
-            if (gameOver) return;
+        let minX = 0;
 
+        function update() {
             if (cursors.left.isDown) {
-                player.setVelocityX(-160);
-                player.anims.play('left', true);
+                if (player.x > minX) {
+                    player.setVelocityX(-160);
+                    player.anims.play('left', true);
+                }
             } else if (cursors.right.isDown) {
                 player.setVelocityX(160);
                 player.anims.play('right', true);
@@ -268,23 +339,162 @@
                 player.anims.play('turn');
             }
 
-            if (cursors.up.isDown && player.body.touching.down) {
+            if (cursors.up.isDown && (player.body.touching.down || player.body.touching.platform)) {
                 player.setVelocityY(-330);
             }
+            background.tilePositionX = this.cameras.main.scrollX * 0.5;
 
-            if (player.x >= levelWidth) {
-                currentLevel++;
-                localStorage.setItem('currentLevel', currentLevel);
-                configureLevel.call(this, currentLevel);
-            }
+            clouds.children.iterate(child => {
+                child.x += 0.5;
+                if (child.x > levelWidth) {
+                    child.x = -child.width;
+                }
+            });
 
-            if (player.y > config.height) {
-                hitTrap(player, null);
-            }
+            minX = Math.max(minX, player.x - 400);
 
-            if (cursors.space.isDown) {
-                shootBullet();
+            // Eliminar balas fuera de la pantalla
+            bullets.children.each(function(bullet) {
+                // Verifica si la bala sale de los límites superiores o inferiores
+                if (bullet.active && (bullet.y < 0 || bullet.y > config.height)) {
+                    bullet.setActive(false);
+                    bullet.setVisible(false);
+                    bullet.destroy(); // Destruye la bala para liberar recursos
+                }
+            });
+
+
+            if (player.x > levelWidth - 100 && !levelCompleted) {
+                levelCompleted = true;
+
+                this.physics.pause();
+                this.input.enabled = false;
+                this.cameras.main.stopFollow();
+                this.cameras.main.fade(500);
+                setTimeout(() => {
+                    Swal.fire({
+                        html: `<h4>¡Enhorabuena! Has completado el nivel ${currentLevel}.<br><br>¿Quieres continuar al nivel ${currentLevel + 1}?</h4>`,
+                        showDenyButton: true,
+                        confirmButtonText: "Continuar",
+                        denyButtonText: "Cancelar",
+                        icon: 'question'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (currentLevel < 25) {
+                                updateGameProgress(currentLevel + 1, score);
+                                localStorage.setItem('currentLevel', currentLevel + 1);
+                                window.location.reload();
+                            } else {
+                                Swal.fire({
+                                    html: "<h4>¡Has completado todos los niveles!<br><br>¡Felicidades!</h4>",
+                                    confirmButtonText: "Reiniciar"
+                                }).then(() => {
+                                    updateGameProgress(1, 0);
+                                    localStorage.setItem('currentLevel', 1);
+                                    localStorage.setItem('score', 0);
+                                    window.location.href = "/juegos/adventure_one";
+                                });
+                            }
+                        } else if (result.isDenied) {
+                            window.location.href = "/juegos";
+                        }
+                    });
+                }, 500);
             }
         }
+
+
+        function collectStar(player, star) {
+            star.disableBody(true, true);
+
+            score += 10;
+            localStorage.setItem('score', score);
+            scoreText.setText('Score: ' + score);
+
+            if (stars.countActive(true) === 0) {
+                stars.children.iterate(child => {
+                    child.enableBody(true, child.x, 0, true, true);
+                });
+            }
+        }
+
+        function dropBomb() {
+    if (bombsCount >= maxBombs) {
+        bombsLimitReached = true; // Marca el límite como alcanzado
+        return; // No crea más bombas si ya se alcanzó el límite
+    }
+
+    let x = Phaser.Math.Between(0, levelWidth);
+    let bomb = bombs.create(x, 6, 'bomb');
+    bomb.setBounce(1);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+
+    bombsCount++; // Incrementa el contador de bombas
+}
+
+        function hitBomb(player, bomb) {
+            this.physics.pause();
+            player.setTint(0xff0000);
+            player.anims.play('turn');
+            Swal.fire({
+                html: "<h4>¡Perdiste!<br><br>¿Quieres reiniciar el juego?</h4>",
+                confirmButtonText: "Reiniciar",
+                icon: 'error',
+            }).then(() => {
+                //localStorage.setItem('currentLevel', currentLevel);
+                //localStorage.setItem('score', score);
+                window.location.href = "/juegos/adventure_one";
+            });
+        }
+
+        function hitTrap(player, trap) {
+            this.physics.pause();
+            player.setTint(0xff0000);
+            player.anims.play('turn');
+            Swal.fire({
+                html: "<h4>¡Has caído en una trampa!<br><br>Intenta de nuevo</h4>",
+                confirmButtonText: "Reiniciar",
+                icon: 'error',
+            }).then(() => {
+                //localStorage.setItem('currentLevel', currentLevel);
+                //localStorage.setItem('score', score);
+                window.location.reload();
+            });
+        }
+
+        function updateGameProgress(level, score) {
+            if (userId) {
+                axios.patch('/dashboard/edit-level-score/', {
+                        game_id: gameId,
+                        level: level,
+                        score: score
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => {
+                        console.log('Datos sincronizados:', response.data);
+                    })
+                    .catch(error => {
+                        console.error('Error al sincronizar datos:', error);
+                    });
+            }
+        }
+
+        document.getElementById('next-level-btn').addEventListener('click', () => {
+            localStorage.setItem('currentLevel', currentLevel + 1);
+            updateGameProgress(currentLevel + 1, score);
+            window.location.reload();
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            localStorage.setItem('currentLevel', 1);
+            localStorage.setItem('score', 0);
+            updateGameProgress(scoreDb, currentLevelDb);
+            window.location.href = "/juegos/adventure_one";
+        });
     });
 </script>
