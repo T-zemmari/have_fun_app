@@ -232,4 +232,9 @@ class AdminController extends Controller
 
         return response()->json(['message' => 'El usuario de no esta logeado'], 401);
     }
+
+    public function genPositions()
+    {
+        return view('admin.gen_pos');
+    }
 }

@@ -23,8 +23,10 @@ Route::get('/contacto', function () {
 
 
 
+
 Route::get('/juegos', [GameController::class, 'getGames'])->name('coleccion');
 Route::post('/contact', [ContactController::class, 'sendMail'])->name('contact.send');
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -52,7 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/lista_de_juegos/anyadir', [AdminController::class, 'addGame'])->name('admin.add-game');
     Route::get('/dashboard/usuario', [AdminController::class, 'getUsers'])->name('admin.users');
     Route::get('/dashboard/permisos', [AdminController::class, 'getPermises'])->name('admin.permises');
-
+    Route::get('/dashboard/gen_pos', [AdminController::class, 'genPositions'])->name('editor_gen_pos');
 
     Route::post('/dashboard/new_game', [AdminController::class, 'storeGame'])->name('new_game');
     Route::post('/dashboard/change-img-game/{id}', [AdminController::class, 'changeImgGame'])->name('change-img-game');

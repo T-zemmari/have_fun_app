@@ -78,7 +78,7 @@
 
         let player, cursors, groundLayer, background, clouds, stars, bombs, traps, platforms, bullets;
         let lastFired = 0;
-        let levelWidth = 1000;
+        let levelWidth = 10000;
 
         function preload() {
             this.load.image('background', background_img);
@@ -236,18 +236,106 @@
             }).setScrollFactor(0);
         }
 
+
+        const levelConfigurations = [
+            // Configuración para el nivel 1
+            {
+                platforms: [ { x: 400, y: 400 },
+                 { x: 700, y: 250 },
+                 { x: 1200, y: 100 },
+                 { x: 1600, y: 300 },
+                 { x: 1850, y: 450 },
+                 { x: 2500, y: 200 },
+                 { x: 3200, y: 300 },
+                 { x: 3800, y: 150 },
+                 { x: 4400, y: 400 },
+                 { x: 5000, y: 250 },
+                 { x: 5800, y: 350 },
+                 { x: 6400, y: 100 },
+                 { x: 7000, y: 300 },
+                 { x: 7600, y: 450 },
+                 { x: 8200, y: 200 },
+                 { x: 8800, y: 300 },
+                 { x: 9400, y: 150 },
+                 { x: 10000, y: 400 }
+                     ],
+                traps: [{
+                        x: 300,
+                        y: 350
+                    },
+                    {
+                        x: 500,
+                        y: 250
+                    }
+                ]
+            },
+            // Configuración para el nivel 2
+            {
+                platforms: [{
+                        x: 150,
+                        y: 250
+                    },
+                    {
+                        x: 350,
+                        y: 200
+                    },
+                    {
+                        x: 550,
+                        y: 150
+                    },
+                    {
+                        x: 750,
+                        y: 100
+                    }
+                ],
+                traps: [{
+                        x: 400,
+                        y: 270
+                    },
+                    {
+                        x: 600,
+                        y: 220
+                    }
+                ]
+            },
+            // ... agrega configuraciones para niveles hasta el nivel 25
+        ];
+
+        
         let bombsCount = 0; // Contador de bombas actuales
         let maxBombs = 5; // Máximo de bombas por nivel
         let bombsLimitReached = false; // Bandera para saber si se alcanzó el límite de bombas
 
         function configureLevel(level) {
+            // Asegúrate de que el nivel esté dentro del rango válido
+            if (level < 1 || level > levelConfigurations.length) {
+                console.error('Nivel no válido:', level);
+                return;
+            }
 
-            bombsCount = 0; // Reinicia el contador de bombas al configurar un nuevo nivel
-            bombsLimitReached = false; // Reinicia la bandera para saber si se alcanzó el límite
+            const levelConfig = levelConfigurations[level - 1]; // Obtener la configuración para el nivel actual
 
-            let trapCount = Math.min(level, 5); // Máximo 5 trampas
-            let platformCount = Math.min(level + 1, 3); // Máximo 3 plataformas
+            // Limpiar trampas y plataformas existentes
+            traps.clear(true, true);
+            platforms.clear(true, true);
 
+            // Configuración de trampas
+            levelConfig.traps.forEach(trapPos => {
+                let trap = traps.create(trapPos.x, trapPos.y, 'trap');
+                trap.setImmovable(true);
+                this.physics.add.collider(trap, groundLayer);
+                this.physics.add.collider(trap, platforms);
+            });
+
+            // Configuración de plataformas
+            levelConfig.platforms.forEach(platformPos => {
+                let platform = platforms.create(platformPos.x, platformPos.y, 'platform');
+                platform.setImmovable(true);
+            });
+
+            // Configuración de bombas
+            bombsCount = 0; // Reinicia el contador de bombas
+            bombsLimitReached = false; // Reinicia la bandera de límite
             this.time.addEvent({
                 delay: 1000,
                 callback: () => {
@@ -258,57 +346,8 @@
                 callbackScope: this,
                 loop: true
             });
-
-            traps.clear(true, true);
-            platforms.clear(true, true); // Limpiar plataformas existentes
-
-            // Configuración de trampas
-            for (let i = 0; i < trapCount; i++) {
-                let x = Phaser.Math.Between(200, levelWidth - 200);
-                let trap = traps.create(x, 548, 'trap');
-                trap.setImmovable(true);
-
-                // Ajustar la posición vertical de la trampa para que esté en el suelo o en una plataforma
-                this.physics.add.collider(trap, groundLayer);
-                this.physics.add.collider(trap, platforms);
-            }
-
-            // Configuración de plataformas
-            let platformPositions = []; // Array para almacenar las posiciones de las plataformas
-            let candidatePositions = [];
-
-            // Generar posiciones candidatas
-            for (let i = 0; i < platformCount * 2; i++) { // Generar el doble de posiciones necesarias
-                let x = Phaser.Math.Between(100, levelWidth - 100);
-                let y = Phaser.Math.Between(150, 400);
-                candidatePositions.push({
-                    x,
-                    y
-                });
-            }
-
-            // Filtrar posiciones válidas
-            candidatePositions.forEach(pos => {
-                let isPositionValid = platformPositions.every(existingPos => {
-                    let distanceX = Math.abs(pos.x - existingPos.x);
-                    let distanceY = Math.abs(pos.y - existingPos.y);
-                    return distanceX >= 100 && distanceY >= 150;
-                });
-
-                if (isPositionValid) {
-                    platformPositions.push(pos);
-                }
-
-                // Parar si ya hemos colocado suficientes plataformas
-                if (platformPositions.length >= platformCount) return;
-            });
-
-            // Crear plataformas
-            platformPositions.forEach(pos => {
-                let platform = platforms.create(pos.x, pos.y, 'platform');
-                platform.setImmovable(true);
-            });
         }
+
 
         function shootBullet() {
             let bullet = bullets.create(player.x, player.y, 'bullet'); // Crea una nueva bala
@@ -419,19 +458,20 @@
         }
 
         function dropBomb() {
-    if (bombsCount >= maxBombs) {
-        bombsLimitReached = true; // Marca el límite como alcanzado
-        return; // No crea más bombas si ya se alcanzó el límite
-    }
+            return false
+            if (bombsCount >= maxBombs) {
+                bombsLimitReached = true; // Marca el límite como alcanzado
+                return; // No crea más bombas si ya se alcanzó el límite
+            }
 
-    let x = Phaser.Math.Between(0, levelWidth);
-    let bomb = bombs.create(x, 6, 'bomb');
-    bomb.setBounce(1);
-    bomb.setCollideWorldBounds(true);
-    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+            let x = Phaser.Math.Between(0, levelWidth);
+            let bomb = bombs.create(x, 6, 'bomb');
+            bomb.setBounce(1);
+            bomb.setCollideWorldBounds(true);
+            bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
 
-    bombsCount++; // Incrementa el contador de bombas
-}
+            bombsCount++; // Incrementa el contador de bombas
+        }
 
         function hitBomb(player, bomb) {
             this.physics.pause();
