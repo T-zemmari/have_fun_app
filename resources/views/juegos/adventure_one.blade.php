@@ -17,6 +17,7 @@
 </x-guest-layout>
 
 <script src="{{ asset('assets/js/phaser.min.js') }}"></script>
+<script src="{{ asset('assets/imgs/adventure_one/js/coordenadas.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -106,50 +107,20 @@
                 groundLayer.create(i, 568, 'ground').setScale(2).refreshBody();
             }
 
-            let platformGraphics = this.add.graphics();
             let platforms = this.physics.add.staticGroup();
 
-            const platformData = [{
-                    id: "platform_1723796671477",
-                    x: 131,
-                    y: 465,
-                    width: 400,
-                    height: 32
-                },
-                {
-                    id: "platform_1723796691798",
-                    x: 506,
-                    y: 364,
-                    width: 200,
-                    height: 32
-                },
-                {
-                    id: "platform_1723796702728",
-                    x: 730,
-                    y: 262,
-                    width: 150,
-                    height: 32
-                },
-                {
-                    id: "platform_1723796723707",
-                    x: 987,
-                    y: 213,
-                    width: 100,
-                    height: 32
-                }
-            ];
+    const platformData = plataformas_nivel_1;
 
-            platformData.forEach(data => {
-                // Dibujar la plataforma usando gráficos
-                platformGraphics.fillStyle(0x0000ff, 1); // Color de la plataforma (azul)
-                platformGraphics.fillRect(data.x, data.y, data.width, data.height);
+    platformData.forEach(data => {
+        // Crear la plataforma física usando imágenes
+        let platform = platforms.create(data.x + data.width / 2, data.y + data.height / 2, null)
+            .setSize(data.width, data.height)
+            .setOrigin(0.5, 0.5); // Ajustar el origen para que el cuerpo físico coincida con el gráfico
 
-                // Añadir la plataforma al grupo de plataformas físicas
-                platforms.create(data.x + data.width / 2, data.y + data.height / 2, null)
-                    .setSize(data.width, data.height)
-                    .setOrigin(0.5, 0.5)
-                    .refreshBody();
-            });
+        // Configurar el cuerpo físico de la plataforma
+        platform.body.setSize(data.width, data.height);
+        platform.body.setOffset(-data.width / 2, -data.height / 2); // Ajustar el offset del cuerpo físico para que coincida con el gráfico
+    });
 
             player = this.physics.add.sprite(100, 450, 'dude');
             player.setBounce(0.2);

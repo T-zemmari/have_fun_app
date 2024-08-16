@@ -5,7 +5,8 @@
         max-width: 800px;
         overflow-x: scroll;
         position: relative;
-        width: 10000px; /* Empezamos con 10000px de ancho pero se puede ajustar dinámicamente */
+        width: 10000px;
+        /* Empezamos con 10000px de ancho pero se puede ajustar dinámicamente */
     }
 
     #contenedor_plataformas {
@@ -42,17 +43,28 @@
         <h1 class="text-3xl font-bold text-center text-gray-900 mb-4">Generador de Coordenadas</h1>
         <div class="w-full flex flex-row justify-center items-center gap-10">
             <div id="div_canvas" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div style="width: 400px; height: 600px; border: 1px dashed black; padding: 10px;" id="contenedor_plataformas">
-                <div class="platform" draggable="true" data-type-id="1" style="border:none;width: 85px; height: 32px; background-color: rgb(22, 138, 231);"></div>
-                <div class="platform" draggable="true" data-type-id="2" style="border:none;width: 150px; height: 32px; background-color: rgb(255, 99, 71);"></div>
-                <div class="platform" draggable="true" data-type-id="3" style="border:none;width: 50px; height: 32px; background-color: rgb(129, 50, 36);"></div>
-                <div class="platform" draggable="true" data-type-id="4" style="border:none;width: 85px; height: 32px; background-color: rgb(63, 89, 110);"></div>
-                <div class="platform" draggable="true" data-type-id="5" style="border:none;width: 100px; height: 32px; background-color: rgb(34, 110, 27);"></div>
-                <div class="platform" draggable="true" data-type-id="6" style="border:none;width: 200px; height: 32px; background-color: rgb(138, 140, 168);"></div>
-                <div class="platform" draggable="true" data-type-id="7" style="border:none;width: 300px; height: 32px; background-color: rgb(21, 26, 107);"></div>
-                <div class="platform" draggable="true" data-type-id="8" style="border:none;width: 400px; height: 32px; background-color: rgb(183, 185, 21);"></div>
-                <div class="platform" draggable="true" data-type-id="9" style="border:none;width: 50px; height: 32px; background-color: rgb(138, 140, 168);"></div>
-                <div class="platform" draggable="true" data-type-id="10" style="border:none;width: 9999px; height: 32px; background-color: rgb(138, 140, 168);"></div>
+            <div style="width: 400px; height: 600px; border: 1px dashed black; padding: 10px;"
+                id="contenedor_plataformas">
+                <div class="platform" draggable="true" data-type-id="1"
+                    style="border:none;width: 85px; height: 32px; background-color: rgb(22, 138, 231);"></div>
+                <div class="platform" draggable="true" data-type-id="2"
+                    style="border:none;width: 150px; height: 32px; background-color: rgb(255, 99, 71);"></div>
+                <div class="platform" draggable="true" data-type-id="3"
+                    style="border:none;width: 50px; height: 32px; background-color: rgb(129, 50, 36);"></div>
+                <div class="platform" draggable="true" data-type-id="4"
+                    style="border:none;width: 85px; height: 32px; background-color: rgb(63, 89, 110);"></div>
+                <div class="platform" draggable="true" data-type-id="5"
+                    style="border:none;width: 100px; height: 32px; background-color: rgb(34, 110, 27);"></div>
+                <div class="platform" draggable="true" data-type-id="6"
+                    style="border:none;width: 200px; height: 32px; background-color: rgb(138, 140, 168);"></div>
+                <div class="platform" draggable="true" data-type-id="7"
+                    style="border:none;width: 300px; height: 32px; background-color: rgb(21, 26, 107);"></div>
+                <div class="platform" draggable="true" data-type-id="8"
+                    style="border:none;width: 400px; height: 32px; background-color: rgb(183, 185, 21);"></div>
+                <div class="platform" draggable="true" data-type-id="9"
+                    style="border:none;width: 50px; height: 32px; background-color: rgb(138, 140, 168);"></div>
+                <div class="platform" draggable="true" data-type-id="10"
+                    style="border:none;width: 9999px; height: 32px; background-color: rgb(138, 140, 168);"></div>
             </div>
         </div>
         <button onclick="generateJSON()">Generar JSON</button>
@@ -70,7 +82,8 @@
 
     function drag(event) {
         isDraggingFromCanvas = event.target.parentElement.id === 'div_canvas';
-        event.dataTransfer.setData("text", event.target.dataset.uniqueId || event.target.dataset.typeId); // Utiliza el ID único si está disponible, de lo contrario el tipo de ID
+        event.dataTransfer.setData("text", event.target.dataset.uniqueId || event.target.dataset
+        .typeId); // Utiliza el ID único si está disponible, de lo contrario el tipo de ID
         event.target.classList.add('dragging');
     }
 
@@ -140,18 +153,19 @@
             canvas.scrollLeft -= 20; // Desplaza a la izquierda
         }
     }
+
     function generateJSON() {
-    const platforms = Array.from(document.querySelectorAll('#div_canvas .platform'));
-    const data = platforms.map(p => ({
-        id: p.dataset.uniqueId,
-        originalId: p.dataset.typeId, // Incluye el ID de la plataforma original
-        x: parseInt(p.style.left, 10),
-        y: parseInt(p.style.top, 10),
-        width: p.offsetWidth,
-        height: p.offsetHeight
-    }));
-    console.log(JSON.stringify(data, null, 2));
-}
+        const platforms = Array.from(document.querySelectorAll('#div_canvas .platform'));
+        const data = platforms.map(p => ({
+            id: p.dataset.uniqueId,
+            originalId: p.dataset.typeId, // Incluye el ID de la plataforma original
+            x: parseInt(p.style.left, 10),
+            y: parseInt(p.style.top, 10),
+            width: p.offsetWidth,
+            height: p.offsetHeight
+        }));
+        console.log(JSON.stringify(data, null, 2));
+    }
 
 
     document.getElementById('div_canvas').addEventListener('dragover', autoScrollAndExpandCanvas);
