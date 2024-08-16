@@ -1,11 +1,11 @@
 <style>
     #div_canvas {
-        width: 10000px;
         height: 600px;
         border: 1px dashed black;
         max-width: 800px;
         overflow-x: scroll;
         position: relative;
+        width: 10000px; /* Empezamos con 10000px de ancho pero se puede ajustar dinámicamente */
     }
 
     #contenedor_plataformas {
@@ -43,15 +43,16 @@
         <div class="w-full flex flex-row justify-center items-center gap-10">
             <div id="div_canvas" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
             <div style="width: 400px; height: 600px; border: 1px dashed black; padding: 10px;" id="contenedor_plataformas">
-                <div class="platform" draggable="true" data-type-id="1" style="width: 85px; height: 32px; background-color: rgb(22, 138, 231);"></div>
-                <div class="platform" draggable="true" data-type-id="2" style="width: 150px; height: 32px; background-color: rgb(255, 99, 71);"></div>
-                <div class="platform" draggable="true" data-type-id="3" style="width: 50px; height: 32px; background-color: rgb(129, 50, 36);"></div>
-                <div class="platform" draggable="true" data-type-id="4" style="width: 85px; height: 32px; background-color: rgb(63, 89, 110);"></div>
-                <div class="platform" draggable="true" data-type-id="5" style="width: 100px; height: 32px; background-color: rgb(34, 110, 27);"></div>
-                <div class="platform" draggable="true" data-type-id="6" style="width: 200px; height: 32px; background-color: rgb(138, 140, 168);"></div>
-                <div class="platform" draggable="true" data-type-id="7" style="width: 300px; height: 32px; background-color: rgb(21, 26, 107);"></div>
-                <div class="platform" draggable="true" data-type-id="8" style="width: 400px; height: 32px; background-color: rgb(183, 185, 21);"></div>
-                <div class="platform" draggable="true" data-type-id="9" style="width: 50px; height: 32px; background-color: rgb(138, 140, 168);"></div>
+                <div class="platform" draggable="true" data-type-id="1" style="border:none;width: 85px; height: 32px; background-color: rgb(22, 138, 231);"></div>
+                <div class="platform" draggable="true" data-type-id="2" style="border:none;width: 150px; height: 32px; background-color: rgb(255, 99, 71);"></div>
+                <div class="platform" draggable="true" data-type-id="3" style="border:none;width: 50px; height: 32px; background-color: rgb(129, 50, 36);"></div>
+                <div class="platform" draggable="true" data-type-id="4" style="border:none;width: 85px; height: 32px; background-color: rgb(63, 89, 110);"></div>
+                <div class="platform" draggable="true" data-type-id="5" style="border:none;width: 100px; height: 32px; background-color: rgb(34, 110, 27);"></div>
+                <div class="platform" draggable="true" data-type-id="6" style="border:none;width: 200px; height: 32px; background-color: rgb(138, 140, 168);"></div>
+                <div class="platform" draggable="true" data-type-id="7" style="border:none;width: 300px; height: 32px; background-color: rgb(21, 26, 107);"></div>
+                <div class="platform" draggable="true" data-type-id="8" style="border:none;width: 400px; height: 32px; background-color: rgb(183, 185, 21);"></div>
+                <div class="platform" draggable="true" data-type-id="9" style="border:none;width: 50px; height: 32px; background-color: rgb(138, 140, 168);"></div>
+                <div class="platform" draggable="true" data-type-id="10" style="border:none;width: 9999px; height: 32px; background-color: rgb(138, 140, 168);"></div>
             </div>
         </div>
         <button onclick="generateJSON()">Generar JSON</button>
@@ -61,6 +62,7 @@
 
 <script>
     let isDraggingFromCanvas = false;
+    const maxCanvasWidth = 10000; // El máximo ancho permitido para el div_canvas
 
     function allowDrop(event) {
         event.preventDefault(); // Permite el drop
@@ -76,9 +78,14 @@
         event.preventDefault(); // Evita el comportamiento predeterminado
         const id = event.dataTransfer.getData("text"); // Obtiene el ID del elemento arrastrado
 
-        const canvasRect = document.getElementById('div_canvas').getBoundingClientRect();
-        const xOffset = event.clientX - canvasRect.left;
+        const canvas = document.getElementById('div_canvas');
+        const canvasRect = canvas.getBoundingClientRect();
+        const xOffset = event.clientX - canvasRect.left + canvas.scrollLeft;
         const yOffset = event.clientY - canvasRect.top;
+
+        if (xOffset > canvas.offsetWidth) {
+            canvas.style.width = `${Math.min(xOffset, maxCanvasWidth)}px`;
+        }
 
         if (isDraggingFromCanvas) {
             // Si el arrastre es desde el div_canvas, simplemente mueve la plataforma existente
@@ -102,7 +109,7 @@
                 clone.addEventListener('dragstart', drag);
                 clone.addEventListener('dragend', () => clone.classList.remove('dragging'));
                 clone.addEventListener('mousemove', updateCoords); // Actualiza coordenadas al mover
-                document.getElementById('div_canvas').appendChild(clone); // Añade al div_canvas
+                canvas.appendChild(clone); // Añade al div_canvas
             }
         }
     }
@@ -115,17 +122,39 @@
         }
     }
 
-    function generateJSON() {
-        const platforms = Array.from(document.querySelectorAll('#div_canvas .platform'));
-        const data = platforms.map(p => ({
-            id: p.dataset.uniqueId,
-            x: parseInt(p.style.left, 10),
-            y: parseInt(p.style.top, 10),
-            width: p.offsetWidth,
-            height: p.offsetHeight
-        }));
-        console.log(JSON.stringify(data, null, 2));
+    function autoScrollAndExpandCanvas(event) {
+        const canvas = document.getElementById('div_canvas');
+        const canvasRect = canvas.getBoundingClientRect();
+
+        // Auto-scroll si te acercas al borde derecho
+        if (event.clientX > canvasRect.right - 50) {
+            canvas.scrollLeft += 20; // Desplaza a la derecha
+            // Expande el canvas si el cursor está cerca del borde derecho
+            if (canvas.scrollLeft + canvas.clientWidth >= canvas.scrollWidth && canvas.offsetWidth < maxCanvasWidth) {
+                canvas.style.width = `${Math.min(canvas.scrollWidth + 100, maxCanvasWidth)}px`;
+            }
+        }
+
+        // Auto-scroll si te acercas al borde izquierdo
+        if (event.clientX < canvasRect.left + 50) {
+            canvas.scrollLeft -= 20; // Desplaza a la izquierda
+        }
     }
+    function generateJSON() {
+    const platforms = Array.from(document.querySelectorAll('#div_canvas .platform'));
+    const data = platforms.map(p => ({
+        id: p.dataset.uniqueId,
+        originalId: p.dataset.typeId, // Incluye el ID de la plataforma original
+        x: parseInt(p.style.left, 10),
+        y: parseInt(p.style.top, 10),
+        width: p.offsetWidth,
+        height: p.offsetHeight
+    }));
+    console.log(JSON.stringify(data, null, 2));
+}
+
+
+    document.getElementById('div_canvas').addEventListener('dragover', autoScrollAndExpandCanvas);
 
     document.querySelectorAll('.platform').forEach(platform => {
         platform.addEventListener('dragstart', drag);
