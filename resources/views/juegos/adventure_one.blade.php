@@ -106,6 +106,51 @@
                 groundLayer.create(i, 568, 'ground').setScale(2).refreshBody();
             }
 
+            let platformGraphics = this.add.graphics();
+            let platforms = this.physics.add.staticGroup();
+
+            const platformData = [{
+                    id: "platform_1723796671477",
+                    x: 131,
+                    y: 465,
+                    width: 400,
+                    height: 32
+                },
+                {
+                    id: "platform_1723796691798",
+                    x: 506,
+                    y: 364,
+                    width: 200,
+                    height: 32
+                },
+                {
+                    id: "platform_1723796702728",
+                    x: 730,
+                    y: 262,
+                    width: 150,
+                    height: 32
+                },
+                {
+                    id: "platform_1723796723707",
+                    x: 987,
+                    y: 213,
+                    width: 100,
+                    height: 32
+                }
+            ];
+
+            platformData.forEach(data => {
+                // Dibujar la plataforma usando gráficos
+                platformGraphics.fillStyle(0x0000ff, 1); // Color de la plataforma (azul)
+                platformGraphics.fillRect(data.x, data.y, data.width, data.height);
+
+                // Añadir la plataforma al grupo de plataformas físicas
+                platforms.create(data.x + data.width / 2, data.y + data.height / 2, null)
+                    .setSize(data.width, data.height)
+                    .setOrigin(0.5, 0.5)
+                    .refreshBody();
+            });
+
             player = this.physics.add.sprite(100, 450, 'dude');
             player.setBounce(0.2);
             player.setCollideWorldBounds(true);
@@ -177,6 +222,8 @@
             this.physics.add.collider(stars, groundLayer);
             this.physics.add.collider(bullets, bombs, destroyBomb, null, this);
             this.physics.add.collider(bombs, groundLayer);
+            this.physics.add.collider(player, platforms);
+
 
             let minDistanceX = 200;
             let minDistanceY = 50;
@@ -244,24 +291,24 @@
         }
 
         function shootBullet() {
-    if (this.time.now - lastFired > 200) {
-        let bullet = bullets.get();
-        if (bullet) {
-            bullet.setActive(true).setVisible(true);
-            bullet.setPosition(player.x, player.y - 20);
-            bullet.setVelocityY(-800); // Disparo hacia arriba
-            bullet.body.gravity.y = 0; // Asegúrate de que no haya gravedad
-            bullet.setCollideWorldBounds(false); // No hacer colisiones con los límites del mundo
-            bullet.setBounce(0); // No hacer rebote
-            // Destruir la bala después de 1 segundo
-            this.time.delayedCall(1000, () => {
-                bullet.setActive(false).setVisible(false); // Ocultar y desactivar la bala
-                bullet.setPosition(-100, -100); // Mover la bala fuera de la pantalla
-            });
-            lastFired = this.time.now;
+            if (this.time.now - lastFired > 200) {
+                let bullet = bullets.get();
+                if (bullet) {
+                    bullet.setActive(true).setVisible(true);
+                    bullet.setPosition(player.x, player.y - 20);
+                    bullet.setVelocityY(-800); // Disparo hacia arriba
+                    bullet.body.gravity.y = 0; // Asegúrate de que no haya gravedad
+                    bullet.setCollideWorldBounds(false); // No hacer colisiones con los límites del mundo
+                    bullet.setBounce(0); // No hacer rebote
+                    // Destruir la bala después de 1 segundo
+                    this.time.delayedCall(1000, () => {
+                        bullet.setActive(false).setVisible(false); // Ocultar y desactivar la bala
+                        bullet.setPosition(-100, -100); // Mover la bala fuera de la pantalla
+                    });
+                    lastFired = this.time.now;
+                }
+            }
         }
-    }
-}
 
 
         function update() {
