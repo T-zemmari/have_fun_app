@@ -107,20 +107,27 @@
                 groundLayer.create(i, 568, 'ground').setScale(2).refreshBody();
             }
 
+            let platformGraphics = this.add.graphics();
             let platforms = this.physics.add.staticGroup();
 
-    const platformData = plataformas_nivel_1;
+            const platformData = plataformas_nivel_1;
 
-    platformData.forEach(data => {
-        // Crear la plataforma física usando imágenes
-        let platform = platforms.create(data.x + data.width / 2, data.y + data.height / 2, null)
-            .setSize(data.width, data.height)
-            .setOrigin(0.5, 0.5); // Ajustar el origen para que el cuerpo físico coincida con el gráfico
+            platformData.forEach(data => {
+                // Dibujar la plataforma usando gráficos
+                platformGraphics.fillStyle(0x8B4513, 1); // Color de la plataforma
+                platformGraphics.fillRect(data.x, data.y, data.width, data.height);
 
-        // Configurar el cuerpo físico de la plataforma
-        platform.body.setSize(data.width, data.height);
-        platform.body.setOffset(-data.width / 2, -data.height / 2); // Ajustar el offset del cuerpo físico para que coincida con el gráfico
-    });
+                // Crear la plataforma física usando gráficos
+                let platform = platforms.create(data.x + data.width / 2, data.y + data.height / 2, null)
+                    .setSize(data.width, data.height)
+                    .setOrigin(0.5,
+                    0.5); // Ajustar el origen para que el cuerpo físico coincida con el gráfico
+
+                // Configurar el cuerpo físico de la plataforma
+                platform.body.setSize(data.width, data.height);
+                platform.body.setOffset(-data.width / 2, -data.height /
+                    2); // Ajustar el offset del cuerpo físico para que coincida con el gráfico
+            });
 
             player = this.physics.add.sprite(100, 450, 'dude');
             player.setBounce(0.2);
@@ -194,6 +201,8 @@
             this.physics.add.collider(bullets, bombs, destroyBomb, null, this);
             this.physics.add.collider(bombs, groundLayer);
             this.physics.add.collider(player, platforms);
+            this.physics.add.collider(stars, platforms);
+            this.physics.add.collider(bombs, platforms);
 
 
             let minDistanceX = 200;
@@ -296,8 +305,12 @@
                 }
 
                 if (cursors.up.isDown && player.body.touching.down) {
-                    player.setVelocityY(-330);
-                }
+            player.setVelocityY(-330); // Salto
+        } else if (cursors.down.isDown) {
+            player.setAccelerationY(600); // Acelera la caída
+        } else {
+            player.setAccelerationY(0); // Gravedad normal cuando no se presiona hacia abajo
+        }
 
                 stars.children.iterate(child => {
                     if (child.y > config.height) {
